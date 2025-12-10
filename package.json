@@ -1,0 +1,212 @@
+{
+  "name": "dev-scholar",
+  "displayName": "DevScholar",
+  "description": "Your Code, Connected to Knowledge. Automatically link, preview, and manage research papers (arXiv, DOI) directly inside VS Code.",
+  "version": "0.2.0",
+  "publisher": "devscholar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/research-paper-linker"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Education",
+    "Other"
+  ],
+  "keywords": [
+    "research",
+    "arxiv",
+    "citations",
+    "bibliography",
+    "academic"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "icon": "images/icon.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "devscholar.parseCurrentFile",
+        "title": "Parse Research Papers in Current File",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.exportBibliography",
+        "title": "Export Bibliography",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.syncWithZotero",
+        "title": "Sync with Zotero",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.showVersionHistory",
+        "title": "Show Paper Version History",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.showAllPapers",
+        "title": "Show All Papers in File",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.clearCache",
+        "title": "Clear Paper Cache",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.showCacheStats",
+        "title": "Show Cache Statistics",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.showPaperDetails",
+        "title": "Show Paper Details",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.openPaper",
+        "title": "Open Paper in Browser",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.copyCitation",
+        "title": "Copy Citation",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.copyBibtex",
+        "title": "Copy BibTeX",
+        "category": "Research Papers"
+      }
+    ],
+    "configuration": {
+      "title": "DevScholar",
+      "properties": {
+        "devscholar.autoParseOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically parse paper references when saving files"
+        },
+        "devscholar.showCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show CodeLens annotations above paper references"
+        },
+        "devscholar.showDecorations": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight paper references with underline decorations"
+        },
+        "devscholar.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show paper count in status bar"
+        },
+        "devscholar.zoteroEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable Zotero integration"
+        },
+        "devscholar.zoteroApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Zotero API key for syncing papers"
+        },
+        "devscholar.zoteroUserId": {
+          "type": "string",
+          "default": "",
+          "description": "Zotero user ID for syncing papers"
+        },
+        "devscholar.trackGitVersions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Track paper references across git commits in .paper-refs.json"
+        },
+        "devscholar.cacheMaxAge": {
+          "type": "number",
+          "default": 7,
+          "description": "Maximum age of cached paper metadata in days"
+        },
+        "devscholar.debounceMs": {
+          "type": "number",
+          "default": 500,
+          "description": "Debounce delay in milliseconds for parsing on keystroke"
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "devscholar.parseCurrentFile",
+          "group": "research-papers@1",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "devscholar.exportBibliography",
+          "group": "research-papers@2",
+          "when": "editorTextFocus"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "devscholar.showPaperDetails",
+          "when": "false"
+        },
+        {
+          "command": "devscholar.openPaper",
+          "when": "false"
+        },
+        {
+          "command": "devscholar.copyCitation",
+          "when": "false"
+        },
+        {
+          "command": "devscholar.copyBibtex",
+          "when": "false"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "devscholar.parseCurrentFile",
+        "key": "ctrl+shift+p",
+        "mac": "cmd+shift+p",
+        "when": "editorTextFocus && !suggestWidgetVisible"
+      },
+      {
+        "command": "devscholar.exportBibliography",
+        "key": "ctrl+shift+b",
+        "mac": "cmd+shift+b",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext .ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "node-cache": "^5.1.2"
+  }
+}

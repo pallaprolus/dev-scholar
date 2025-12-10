@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp add:*)",
+      "Bash(npm run compile:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

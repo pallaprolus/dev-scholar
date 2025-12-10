@@ -1,0 +1,13 @@
+.git
+.gitignore
+.vscode
+.venv
+src/
+scripts/
+node_modules/
+out/test/
+tsconfig.json
+compiled/
+*.map
+*.log
+**/*.ts
