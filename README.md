@@ -1,14 +1,14 @@
 <div align="center">
-  <img src="images/banner.png" alt="DevScholar Banner" width="100%">
+  <img src="https://raw.githubusercontent.com/pallaprolus/dev-scholar/main/images/banner.png" alt="DevScholar Banner" width="100%">
 </div>
 
 # DevScholar
 
 <div align="center">
 
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/devscholar.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=devscholar.dev-scholar)
-[![Version](https://img.shields.io/visual-studio-marketplace/v/devscholar.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=devscholar.dev-scholar)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/devscholar.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=devscholar.dev-scholar)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/pallaprolus.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=pallaprolus.dev-scholar)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/pallaprolus.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=pallaprolus.dev-scholar)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/pallaprolus.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=pallaprolus.dev-scholar)
 
 **Your Code, Connected to Knowledge.**
 <br>
