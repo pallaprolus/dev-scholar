@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-12-11T03:27:39.581Z",
+  "lastUpdated": "2025-12-11T03:55:51.657Z",
   "papers": [
     {
       "id": "2301.07041",
@@ -14,7 +14,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
     },
     {
       "id": "1706.03762",
@@ -28,7 +28,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
     },
     {
       "id": "1810.04805",
@@ -42,7 +42,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
     },
     {
       "id": "10.1038/nature14539",
@@ -56,7 +56,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
     },
     {
       "id": "726791",
@@ -70,7 +70,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
     },
     {
       "id": "https://scholar.google.com/scholar?q=deep+learning",
@@ -84,7 +84,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
     },
     {
       "id": "10.30574/wjarr.2025.26.2.2015",
@@ -98,7 +98,7 @@
         }
       ],
       "firstSeen": 1765423145518,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
     },
     {
       "id": "10.32996/jcsts.2025.7.5.92",
@@ -112,7 +112,21 @@
         }
       ],
       "firstSeen": 1765423145518,
-      "lastSeen": 1765423659504
+      "lastSeen": 1765425351579
+    },
+    {
+      "id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+      "type": "semantic_scholar",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 94,
+          "context": "\"Attention Is All You Need\" (Transformer Architecture) A breakthrough paper in NLP. Source: https://www.semanticscholar.org/paper/Attention-is-All-you-Need-Vaswani-Shazeer/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+        }
+      ],
+      "firstSeen": 1765424915062,
+      "lastSeen": 1765425351579
     }
   ],
   "history": [
@@ -136,6 +150,18 @@
         "arxiv:1810.04805",
         "semantic_scholar:220453896"
       ],
+      "filesChanged": [
+        "research_showcase.py"
+      ]
+    },
+    {
+      "commitHash": "0d0cb1a295b2397f896f5d7ba82f6c362d3aa50a",
+      "timestamp": 1765424915062,
+      "message": "fix: fallback to OpenAlex for DOI PDF URLs",
+      "papersAdded": [
+        "semantic_scholar:204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+      ],
+      "papersRemoved": [],
       "filesChanged": [
         "research_showcase.py"
       ]
