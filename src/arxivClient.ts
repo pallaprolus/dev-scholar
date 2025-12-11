@@ -152,8 +152,8 @@ export class MetadataClient {
                 this.cacheMetadata(metadata);
                 return metadata;
             }
-        } catch (error) {
-            console.error(`arXiv API error for ${arxivId}:`, error);
+        } catch (error: any) {
+            console.warn(`arXiv API error for ${arxivId}:`, error.message);
         }
 
         return null;
@@ -232,8 +232,12 @@ export class MetadataClient {
                 this.cacheMetadata(metadata);
                 return metadata;
             }
-        } catch (error) {
-            console.error(`CrossRef API error for ${doi}:`, error);
+        } catch (error: any) {
+            if (error.response?.status === 404) {
+                console.warn(`CrossRef: DOI not found ${doi}`);
+            } else {
+                console.error(`CrossRef API error for ${doi}:`, error.message);
+            }
         }
 
         return null;
@@ -301,8 +305,14 @@ export class MetadataClient {
                 this.cacheMetadata(metadata);
                 return metadata;
             }
-        } catch (error) {
-            console.error(`Semantic Scholar API error for ${corpusId}:`, error);
+        } catch (error: any) {
+            if (error.response?.status === 404) {
+                console.warn(`Semantic Scholar: Paper not found for CorpusId:${corpusId}`);
+            } else if (error.response?.status === 429) {
+                console.warn(`Semantic Scholar: Rate limit exceeded for ${corpusId}`);
+            } else {
+                console.error(`Semantic Scholar API error for ${corpusId}:`, error.message);
+            }
         }
 
         return null;
@@ -396,7 +406,7 @@ export class MetadataClient {
                 const data = fs.readFileSync(this.fileCache, 'utf-8');
                 fileCount = JSON.parse(data).length;
             }
-        } catch {}
+        } catch { }
 
         return {
             memoryCount: this.cache.keys().length,

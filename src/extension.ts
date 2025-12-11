@@ -174,8 +174,17 @@ export async function activate(context: vscode.ExtensionContext) {
                 location: vscode.ProgressLocation.Notification,
                 title: 'Syncing with Zotero...',
                 cancellable: false
-            }, async () => {
-                await zoteroSync.syncPapers(papers);
+            }, async (progress) => {
+                progress.report({ message: 'Fetching paper details...' });
+                const metadata = await metadataClient.fetchMetadata(papers);
+
+                if (metadata.length === 0) {
+                    vscode.window.showWarningMessage('No metadata found for these papers. Cannot sync.');
+                    return;
+                }
+
+                progress.report({ message: 'Sending to Zotero...' });
+                await zoteroSync.syncPapers(metadata);
             });
 
             vscode.window.showInformationMessage(`Synced ${papers.length} papers with Zotero`);
