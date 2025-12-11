@@ -48,7 +48,7 @@ Hover over any link to see:
 -   [x] **v0.4.5**: Semantic Scholar Integration
 -   [x] **v0.4.6**: Robust DOI PDF Preview
 -   [ ] **Future**:
-    -   **Click-to-Cite (The "Hook")**: Auto-complete papers by name (e.g., type "Transformer" → get `[Vaswani et al.]` inserted).
+    -   **Click-to-Cite**: Auto-complete papers by name
     -   Google Scholar Integration (Smart Search Fallback)
     -   Two-way Zotero Sync
     -   Local PDF Annotation

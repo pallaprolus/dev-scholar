@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-12-11T04:14:27.119Z",
+  "lastUpdated": "2025-12-11T05:56:36.070Z",
   "papers": [
     {
       "id": "2301.07041",
@@ -19,7 +19,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "1706.03762",
@@ -35,10 +35,15 @@
           "path": "examples/devscholar_showcase.py",
           "lineNumber": 70,
           "context": "Standard scaled dot-product attention mechanism. \"Attention Is All You Need\" Link: arxiv:1706.03762"
+        },
+        {
+          "path": "README.md",
+          "lineNumber": 40,
+          "context": "See transformer architecture: arxiv:1706.03762"
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "1810.04805",
@@ -57,7 +62,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "10.1038/nature14539",
@@ -76,7 +81,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "726791",
@@ -95,7 +100,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "https://scholar.google.com/scholar?q=deep+learning",
@@ -114,7 +119,7 @@
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "10.30574/wjarr.2025.26.2.2015",
@@ -133,7 +138,7 @@
         }
       ],
       "firstSeen": 1765423145518,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "10.32996/jcsts.2025.7.5.92",
@@ -152,7 +157,7 @@
         }
       ],
       "firstSeen": 1765423145518,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     },
     {
       "id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
@@ -171,7 +176,7 @@
         }
       ],
       "firstSeen": 1765424915062,
-      "lastSeen": 1765426467047
+      "lastSeen": 1765432595974
     }
   ],
   "history": [
