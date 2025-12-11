@@ -8,3 +8,8 @@ out/
 .vscode/paper-cache.json
 __pycache__/
 *.pyc
+
+.claude/
+convert_to_html.py
+simple_convert.py
+README.pdf

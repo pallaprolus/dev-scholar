@@ -12,3 +12,4 @@ compiled/
 *.log
 **/*.ts
 .publish_token
+.claude
