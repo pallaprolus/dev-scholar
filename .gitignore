@@ -4,3 +4,7 @@ out/
 .DS_Store
 *.log
 .publish_token
+.paper-refs.json
+.vscode/paper-cache.json
+__pycache__/
+*.pyc

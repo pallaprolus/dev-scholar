@@ -1,78 +1,61 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/pallaprolus/dev-scholar/main/images/banner.png" alt="DevScholar Banner" width="100%">
-</div>
-
-# DevScholar
-
-<div align="center">
-
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/pallaprolus.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=pallaprolus.dev-scholar)
-[![Version](https://img.shields.io/visual-studio-marketplace/v/pallaprolus.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=pallaprolus.dev-scholar)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/pallaprolus.dev-scholar)](https://marketplace.visualstudio.com/items?itemName=pallaprolus.dev-scholar)
+# DevScholar 🎓
 
 **Your Code, Connected to Knowledge.**
-<br>
-Automatically link, preview, and manage research papers (arXiv, DOI, Semantic Scholar) directly inside VS Code.
 
-</div>
+DevScholar automatically detects research paper references (arXiv, DOI, IEEE, Semantic Scholar) in your code comments and links them to the source. Hover to see abstracts, authors, and citations—or **preview the full PDF** directly inside VS Code!
+
+![DevScholar Demo](DevScholar.gif)
 
 ## ✨ Features
 
-### 🔍 Smart Parsing
-DevScholar automatically detects research paper references in your code comments. Whether it's an arXiv ID (`arxiv:1706.03762`), a DOI (`doi:10.1038/nature14539`), or a Semantic Scholar ID, DevScholar finds it and provides instant context.
+### 1. 🔍 Instant Link Detection
+Automatically highlights paper IDs in your comments. Supported formats:
+-   **arXiv**: `arxiv:1706.03762`, `[arxiv:1810.04805]`, or full URLs
+-   **DOI**: `doi:10.1038/nature14539` or `https://doi.org/...`
+-   **IEEE**: `ieee:726791` or Xplore URLs
+-   **Semantic Scholar**: Full URLs (e.g., `semanticscholar.org/paper/...`)
 
-### 📜 Hover Previews
-Simply hover over any detected reference to see a rich preview card containing:
-- Paper Title
-- Authors
-- Publication Year & Journal
-- Abstract/Summary
-- Links to PDF, arXiv, and DOI
-- Quick Actions (Copy Citation, Open in Browser)
+### 2. 📄 In-Editor PDF Preview
+Click **"Preview PDF"** (CodeLens or Hover) to read the full paper without leaving your editor.
+-   Uses a custom high-performance PDF renderer.
+-   Works with arXiv, IEEE (open access), and DOI references (via OpenAlex fallback).
 
-### 📚 Bibliography Export
-Generate bibliographies effortlessly from the papers referenced in your current file.
-- **Formats**: BibTeX, APA, Chicago
-- **Command**: `DevScholar: Export Bibliography`
+### 3. ℹ️ Rich Metadata Hover
+Hover over any link to see:
+-   Title & Authors
+-   Abstract / Summary
+-   Publication Date
+-   Citation Count
 
-### 🔄 Zotero Integration
-Sync detected papers directly to your Zotero library for long-term management.
-- **Command**: `DevScholar: Sync with Zotero`
+### 4. 📚 Bibliography Management
+-   **Copy BibTeX**: Right-click or use the command palette to copy the BibTeX citation for any paper.
+-   **Export All**: Generate a full bibliography for all papers referenced in your current file.
 
-## 🚀 Usage
+## 🚀 Getting Started
 
-### Supported Formats
-DevScholar recognizes references in comments in the following formats:
+1.  **Install** the extension.
+2.  Open any code file.
+3.  Add a comment with a paper reference:
+    ```python
+    # See transformer architecture: arxiv:1706.03762
+    def attention(q, k, v): ...
+    ```
+4.  Hover over the ID or click "Preview PDF"!
 
-- **arXiv**: `arxiv:1234.5678`, `arXiv:2101.00001`
-- **DOI**: `doi:10.1145/3448016.3452838`
-- **Semantic Scholar**: `S2:e07b3...`
+## 🗺️ Roadmap
 
-### Commands
-All commands are prefixed with `DevScholar`:
+-   [x] **v0.4.0**: IEEE Support & Metadata Caching
+-   [x] **v0.4.5**: Semantic Scholar Integration
+-   [x] **v0.4.6**: Robust DOI PDF Preview
+-   [ ] **Future**:
+    -   Google Scholar Integration (Smart Search Fallback)
+    -   Two-way Zotero Sync
+    -   Local PDF Annotation
 
-- `DevScholar: Parse Research Papers in Current File`: Force a re-scan of the current file.
-- `DevScholar: Export Bibliography`: Copy a formatted bibliography to your clipboard.
-- `DevScholar: Sync with Zotero`: Add referenced papers to your Zotero collection.
-- `DevScholar: Show Paper Version History`: Track paper references across Git commits.
+## 🤝 Contributing
 
-## ⚙️ Configuration
+Check out `examples/devscholar_showcase.py` to see various link formats in action!
+Contributions are welcome on [GitHub](https://github.com/pallaprolus/dev-scholar).
 
-| Setting | Default | Description |
-| str | str | str |
-| --- | --- | --- |
-| `devscholar.autoParseOnSave` | `true` | Automatically parse references when saving. |
-| `devscholar.showCodeLens` | `true` | Show CodeLens actions above paper references. |
-| `devscholar.showDecorations` | `true` | Underline detected paper references. |
-| `devscholar.zoteroEnabled` | `false` | Enable Zotero syncing features. |
-
-## 📦 Installation
-
-Install directly from the VS Code Marketplace or build from source:
-
-1. Clone the repository
-2. Run `npm install`
-3. Press `F5` to start debugging
-
-## 📄 License
-MIT
+---
+**Enjoying DevScholar?** Please leave a review! ⭐

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-12-11T03:55:51.657Z",
+  "lastUpdated": "2025-12-11T04:14:27.119Z",
   "papers": [
     {
       "id": "2301.07041",
@@ -11,10 +11,15 @@
           "path": "research_showcase.py",
           "lineNumber": 64,
           "context": "Overview of the models behind ChatGPT Reference: https://arxiv.org/abs/2301.07041"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 64,
+          "context": "Overview of the models behind ChatGPT Reference: https://arxiv.org/abs/2301.07041"
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "1706.03762",
@@ -25,10 +30,15 @@
           "path": "research_showcase.py",
           "lineNumber": 70,
           "context": "Standard scaled dot-product attention mechanism. \"Attention Is All You Need\" Link: arxiv:1706.03762"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 70,
+          "context": "Standard scaled dot-product attention mechanism. \"Attention Is All You Need\" Link: arxiv:1706.03762"
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "1810.04805",
@@ -39,10 +49,15 @@
           "path": "research_showcase.py",
           "lineNumber": 76,
           "context": "Bidirectional Encoder Representations from Transformers. Great for NLP tasks. See: [arxiv:1810.04805]"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 76,
+          "context": "Bidirectional Encoder Representations from Transformers. Great for NLP tasks. See: [arxiv:1810.04805]"
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "10.1038/nature14539",
@@ -53,10 +68,15 @@
           "path": "research_showcase.py",
           "lineNumber": 81,
           "context": "The seminal Nature paper on Deep Learning by LeCun, Bengio, and Hinton. DOI: doi:10.1038/nature14539"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 81,
+          "context": "The seminal Nature paper on Deep Learning by LeCun, Bengio, and Hinton. DOI: doi:10.1038/nature14539"
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "726791",
@@ -67,10 +87,15 @@
           "path": "research_showcase.py",
           "lineNumber": 87,
           "context": "Gradient-Based Learning Applied to Document Recognition. The classic CNN paper. IEEE Link: ieee:726791 IEEE URL: https://ieeexplore.ieee.org/document/726791"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 87,
+          "context": "Gradient-Based Learning Applied to Document Recognition. The classic CNN paper. IEEE Link: ieee:726791 IEEE URL: https://ieeexplore.ieee.org/document/726791"
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "https://scholar.google.com/scholar?q=deep+learning",
@@ -81,10 +106,15 @@
           "path": "research_showcase.py",
           "lineNumber": 99,
           "context": "Search for latest trends in \"Deep Learning\" Search: https://scholar.google.com/scholar?q=deep+learning"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 99,
+          "context": "Search for latest trends in \"Deep Learning\" Search: https://scholar.google.com/scholar?q=deep+learning"
         }
       ],
       "firstSeen": 1765422634698,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "10.30574/wjarr.2025.26.2.2015",
@@ -95,10 +125,15 @@
           "path": "research_showcase.py",
           "lineNumber": 21,
           "context": "related_work: This implementation follows the paradigm of decentralized intelligence discussed in: doi:10.30574/wjarr.2025.26.2.2015 \"Edge Computing and AI Integration: New infrastructure paradigms\""
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 21,
+          "context": "related_work: This implementation follows the paradigm of decentralized intelligence discussed in: doi:10.30574/wjarr.2025.26.2.2015 \"Edge Computing and AI Integration: New infrastructure paradigms\""
         }
       ],
       "firstSeen": 1765423145518,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "10.32996/jcsts.2025.7.5.92",
@@ -109,10 +144,15 @@
           "path": "research_showcase.py",
           "lineNumber": 46,
           "context": "citation: Logic derived from \"AI and Cloud Automation's Role in Sustainability\". See: doi:10.32996/jcsts.2025.7.5.92"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 46,
+          "context": "citation: Logic derived from \"AI and Cloud Automation's Role in Sustainability\". See: doi:10.32996/jcsts.2025.7.5.92"
         }
       ],
       "firstSeen": 1765423145518,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     },
     {
       "id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
@@ -123,10 +163,15 @@
           "path": "research_showcase.py",
           "lineNumber": 94,
           "context": "\"Attention Is All You Need\" (Transformer Architecture) A breakthrough paper in NLP. Source: https://www.semanticscholar.org/paper/Attention-is-All-you-Need-Vaswani-Shazeer/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+        },
+        {
+          "path": "examples/devscholar_showcase.py",
+          "lineNumber": 94,
+          "context": "\"Attention Is All You Need\" (Transformer Architecture) A breakthrough paper in NLP. Source: https://www.semanticscholar.org/paper/Attention-is-All-you-Need-Vaswani-Shazeer/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
         }
       ],
       "firstSeen": 1765424915062,
-      "lastSeen": 1765425351579
+      "lastSeen": 1765426467047
     }
   ],
   "history": [
