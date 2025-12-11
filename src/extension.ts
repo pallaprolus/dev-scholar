@@ -7,6 +7,7 @@ import { ZoteroSync } from './zoteroSync';
 import { VersionTracker } from './versionTracker';
 import { FileWatcher } from './fileWatcher';
 import { PaperCodeLensProvider, PaperDecorationProvider, PaperStatusBarItem } from './codeLensProvider';
+import { PdfPreviewManager } from './pdfPreview';
 
 let commentParser: CommentParser;
 let metadataClient: MetadataClient;
@@ -18,9 +19,12 @@ let fileWatcher: FileWatcher;
 let codeLensProvider: PaperCodeLensProvider;
 let decorationProvider: PaperDecorationProvider;
 let statusBarItem: PaperStatusBarItem;
+let pdfPreviewManager: PdfPreviewManager; // Declare pdfPreviewManager
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('DevScholar is now active');
+
+    const outputChannel = vscode.window.createOutputChannel('DevScholar'); // Initialize outputChannel
 
     // Initialize core modules
     commentParser = new CommentParser();

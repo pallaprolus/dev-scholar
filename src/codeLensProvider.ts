@@ -70,6 +70,12 @@ export class PaperCodeLensProvider implements vscode.CodeLensProvider {
                 }));
 
                 codeLenses.push(new vscode.CodeLens(range, {
+                    title: '$(eye) Preview PDF',
+                    command: 'devscholar.previewPdf',
+                    arguments: [paper]
+                }));
+
+                codeLenses.push(new vscode.CodeLens(range, {
                     title: '$(clippy) Copy Citation',
                     command: 'devscholar.copyCitation',
                     arguments: [paper]

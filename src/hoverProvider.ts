@@ -103,7 +103,10 @@ export class HoverProvider implements vscode.HoverProvider {
         const links: string[] = [];
 
         if (metadata.pdfUrl) {
-            links.push(`[PDF](${metadata.pdfUrl})`);
+            // Use command URI for internal preview
+            const previewCommand = `command:devscholar.previewPdf?${encodeURIComponent(JSON.stringify(metadata))}`;
+            links.push(`[Preview PDF](${previewCommand})`);
+            links.push(`[Open PDF (Browser)](${metadata.pdfUrl})`);
         }
         if (metadata.arxivUrl) {
             links.push(`[arXiv](${metadata.arxivUrl})`);
