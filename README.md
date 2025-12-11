@@ -4,7 +4,7 @@
 
 DevScholar automatically detects research paper references (arXiv, DOI, IEEE, Semantic Scholar) in your code comments and links them to the source. Hover to see abstracts, authors, and citations—or **preview the full PDF** directly inside VS Code!
 
-![DevScholar Demo](DevScholar.gif)
+![DevScholar Demo](https://github.com/pallaprolus/dev-scholar/raw/main/DevScholar.gif)
 
 ## ✨ Features
 
@@ -48,6 +48,7 @@ Hover over any link to see:
 -   [x] **v0.4.5**: Semantic Scholar Integration
 -   [x] **v0.4.6**: Robust DOI PDF Preview
 -   [ ] **Future**:
+    -   **Click-to-Cite (The "Hook")**: Auto-complete papers by name (e.g., type "Transformer" → get `[Vaswani et al.]` inserted).
     -   Google Scholar Integration (Smart Search Fallback)
     -   Two-way Zotero Sync
     -   Local PDF Annotation
