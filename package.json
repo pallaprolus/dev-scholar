@@ -2,7 +2,7 @@
   "name": "dev-scholar",
   "displayName": "DevScholar",
   "description": "Your Code, Connected to Knowledge. Automatically link, preview, and manage research papers (arXiv, DOI) directly inside VS Code.",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "publisher": "pallaprolus",
   "repository": {
     "type": "git",
