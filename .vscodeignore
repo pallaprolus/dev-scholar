@@ -11,3 +11,4 @@ compiled/
 *.map
 *.log
 **/*.ts
+.publish_token
