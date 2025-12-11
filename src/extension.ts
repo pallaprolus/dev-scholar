@@ -37,6 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
     codeLensProvider = new PaperCodeLensProvider(commentParser, metadataClient);
     decorationProvider = new PaperDecorationProvider(commentParser);
     statusBarItem = new PaperStatusBarItem(commentParser);
+    pdfPreviewManager = new PdfPreviewManager(context); // Initialize manager
 
     // Register hover provider
     context.subscriptions.push(
@@ -255,6 +256,31 @@ export async function activate(context: vscode.ExtensionContext) {
             const bibtex = await bibliographyExporter.export([paper], 'bibtex');
             await vscode.env.clipboard.writeText(bibtex);
             vscode.window.showInformationMessage('BibTeX copied to clipboard');
+        })
+    );
+
+    // Preview PDF
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.previewPdf', async (paper: any) => {
+            if (!paper) return;
+            // Ensure we have full metadata
+            let metadata = paper;
+            // Check if it's a raw paper reference or partial object
+            if (!paper.title && paper.id && paper.type) {
+                // If passed just ID reference, fetch full metadata first
+                const [fullMeta] = await metadataClient.fetchMetadata([{
+                    id: paper.id,
+                    type: paper.type,
+                    lineNumber: 0,
+                    columnNumber: 0,
+                    rawText: ''
+                }]);
+                metadata = fullMeta;
+            }
+
+            if (metadata) {
+                await pdfPreviewManager.preview(metadata);
+            }
         })
     );
 
