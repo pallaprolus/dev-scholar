@@ -30,3 +30,11 @@ def transformer_attention():
 class BERTModel:
     # Based on https://arxiv.org/abs/1810.04805v2
     pass
+
+# IEEE Xplore
+# IEEE Link: ieee:1234567
+# URL: https://ieeexplore.ieee.org/document/726791
+
+# Google Scholar
+# URL: https://scholar.google.com/scholar?cluster=17743936668742460662
+# Search: https://scholar.google.com/scholar?q=deep+learning

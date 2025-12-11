@@ -8,7 +8,7 @@ import { OpenAlexClient } from './openAlexClient';
 
 export interface PaperMetadata {
     id: string;
-    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee';
+    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee' | 'google_scholar';
     title: string;
     authors: string[];
     summary: string;
@@ -114,17 +114,9 @@ export class MetadataClient {
                     const oaMeta = await this.openAlexClient.fetchMetadata(paper.id, paper.type);
                     return oaMeta ? { ...oaMeta, summary: oaMeta.summary || '', fetchedAt: Date.now() } : null;
                 case 'ieee':
-                    return {
-                        id: paper.id,
-                        type: 'ieee',
-                        title: `IEEE Document ${paper.id}`,
-                        authors: ['Unknown'],
-                        summary: '',
-                        journal: 'IEEE Xplore',
-                        pdfUrl: `https://ieeexplore.ieee.org/document/${paper.id}`,
-                        doiUrl: `https://ieeexplore.ieee.org/document/${paper.id}`,
-                        fetchedAt: Date.now()
-                    };
+                    return this.fetchFromIEEE(paper.id);
+                case 'google_scholar':
+                    return this.fetchFromGoogleScholar(paper.id);
                 default:
                     return null;
             }
@@ -132,6 +124,89 @@ export class MetadataClient {
             console.error(`Error fetching ${paper.type}:${paper.id}`, error);
             return null;
         }
+    }
+
+    // ==================== IEEE API (Scrape + OpenAlex) ====================
+    private async fetchFromIEEE(id: string): Promise<PaperMetadata | null> {
+        try {
+            // 1. Scrape title from IEEE Xplore
+            const url = `https://ieeexplore.ieee.org/document/${id}`;
+            const response = await this.axiosInstance.get(url);
+
+            // Regex to find title in metadata JSON or meta tag
+            // Using the looser regex found to work in testing: metadata={.*"title":"([^"]+)"
+            const titleMatch = response.data.match(/metadata={.*"title":"([^"]+)"/);
+
+            if (titleMatch && titleMatch[1]) {
+                const title = titleMatch[1];
+
+                // 2. Search OpenAlex for this title
+                const oaMeta = await this.openAlexClient.search(title);
+
+                if (oaMeta) {
+                    // Return OpenAlex metadata but with IEEE ID
+                    return {
+                        ...oaMeta,
+                        id: id,
+                        type: 'ieee',
+                        // Keep the PDF URL pointing to IEEE if OpenAlex doesn't have an OA one
+                        pdfUrl: oaMeta.pdfUrl || `https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=${id}`,
+                        fetchedAt: Date.now()
+                    };
+                }
+
+                // Fallback if OpenAlex search fails but we have title
+                return {
+                    id: id,
+                    type: 'ieee',
+                    title: title,
+                    authors: ['IEEE Author'], // We could try to scrape authors too but title is most important
+                    summary: 'Abstract not available (OpenAlex lookup failed).',
+                    journal: 'IEEE Xplore',
+                    pdfUrl: `https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=${id}`,
+                    doiUrl: `https://ieeexplore.ieee.org/document/${id}`,
+                    fetchedAt: Date.now()
+                };
+            }
+        } catch (error) {
+            console.warn(`IEEE scrape failed for ${id}`, error);
+        }
+
+        // Ultimate fallback
+        return {
+            id: id,
+            type: 'ieee',
+            title: `IEEE Document ${id}`,
+            authors: ['Unknown'],
+            summary: '',
+            journal: 'IEEE Xplore',
+            pdfUrl: `https://ieeexplore.ieee.org/document/${id}`,
+            doiUrl: `https://ieeexplore.ieee.org/document/${id}`,
+            fetchedAt: Date.now()
+        };
+    }
+
+    // ==================== Google Scholar ====================
+    private async fetchFromGoogleScholar(url: string): Promise<PaperMetadata | null> {
+        // Try to extract query from URL
+        let title = 'Google Scholar Link';
+        try {
+            // Check for q= parameter
+            const match = url.match(/[?&]q=([^&]+)/);
+            if (match && match[1]) {
+                title = `Search: "${decodeURIComponent(match[1]).replace(/\+/g, ' ')}"`;
+            }
+        } catch (e) { }
+
+        return {
+            id: url,
+            type: 'google_scholar',
+            title: title,
+            authors: ['Google Scholar'],
+            summary: 'Metadata fetching not supported for Google Scholar search results.',
+            arxivUrl: url.startsWith('http') ? url : `https://${url}`,
+            fetchedAt: Date.now()
+        };
     }
 
     private async rateLimit(api: string): Promise<void> {

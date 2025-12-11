@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 export interface PaperReference {
     id: string;
-    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee';
+    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee' | 'google_scholar';
     lineNumber: number;
     columnNumber: number;
     rawText: string;
@@ -89,6 +89,12 @@ export class CommentParser {
             pattern: /(?:ieeexplore\.ieee\.org\/document\/|ieee[:\s]+)(\d+)/gi,
             type: 'ieee',
             idGroup: 1
+        },
+        // Google Scholar URL
+        {
+            pattern: /(?:https?:\/\/)?scholar\.google\.com\/scholar\?[^,\s\]]+/gi,
+            type: 'google_scholar',
+            idGroup: 0
         }
     ];
 

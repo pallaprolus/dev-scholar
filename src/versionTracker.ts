@@ -14,7 +14,7 @@ interface PaperRefsFile {
 
 interface PaperEntry {
     id: string;
-    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee';
+    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee' | 'google_scholar';
     title: string;
     firstSeen: number;
     lastSeen: number;

@@ -34,6 +34,24 @@ export class OpenAlexClient {
         return null;
     }
 
+    async search(query: string): Promise<PaperMetadata | null> {
+        try {
+            const url = `${this.baseUrl}?search=${encodeURIComponent(query)}&per_page=1`;
+            const response = await axios.get(url, {
+                headers: { 'User-Agent': 'mailto:devscholar-extension@example.com' }
+            });
+
+            if (response.status === 200 && response.data && response.data.results && response.data.results.length > 0) {
+                // Use the first result
+                const bestMatch = response.data.results[0];
+                return this.mapToMetadata(bestMatch, 'openalex', bestMatch.id.replace('https://openalex.org/', ''));
+            }
+        } catch (error: any) {
+            console.warn(`OpenAlex search failed for "${query}"`, error.message);
+        }
+        return null;
+    }
+
     private mapToMetadata(data: any, originalType: string, originalId: string): PaperMetadata {
         const primaryLocation = data.primary_location || {};
         const source = primaryLocation.source || {};
