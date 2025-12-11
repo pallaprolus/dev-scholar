@@ -301,6 +301,28 @@ export class MetadataClient {
 
             const work = response.data?.message;
             if (work) {
+                // Check if CrossRef provides a PDF link
+                let pdfUrl: string | undefined;
+                if (work.link) {
+                    const pdfLink = work.link.find((l: any) =>
+                        l['content-type'] === 'application/pdf' ||
+                        l.URL?.toLowerCase().endsWith('.pdf')
+                    );
+                    if (pdfLink) pdfUrl = pdfLink.URL;
+                }
+
+                // If no PDF found in CrossRef, try OpenAlex as fallback
+                if (!pdfUrl) {
+                    try {
+                        const oaMeta = await this.openAlexClient.fetchMetadata(doi, 'doi');
+                        if (oaMeta && oaMeta.pdfUrl) {
+                            pdfUrl = oaMeta.pdfUrl;
+                        }
+                    } catch (e) {
+                        console.warn('OpenAlex fallback for DOI PDF failed', e);
+                    }
+                }
+
                 return {
                     id: doi,
                     type: 'doi',
@@ -310,6 +332,7 @@ export class MetadataClient {
                     published: this.parseCrossRefDate(work.published || work.created),
                     doi: doi,
                     doiUrl: `https://doi.org/${doi}`,
+                    pdfUrl: pdfUrl,
                     journal: work['container-title']?.[0],
                     volume: work.volume,
                     pages: work.page,
