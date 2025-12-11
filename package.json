@@ -2,7 +2,7 @@
   "name": "dev-scholar",
   "displayName": "DevScholar",
   "description": "Your Code, Connected to Knowledge. Automatically link, preview, and manage research papers (arXiv, DOI) directly inside VS Code.",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "publisher": "pallaprolus",
   "repository": {
     "type": "git",
@@ -83,6 +83,11 @@
       {
         "command": "devscholar.copyBibtex",
         "title": "Copy BibTeX",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.previewPdf",
+        "title": "Preview PDF",
         "category": "Research Papers"
       }
     ],
