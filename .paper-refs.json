@@ -1,0 +1,144 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-11T03:27:39.581Z",
+  "papers": [
+    {
+      "id": "2301.07041",
+      "type": "arxiv",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 64,
+          "context": "Overview of the models behind ChatGPT Reference: https://arxiv.org/abs/2301.07041"
+        }
+      ],
+      "firstSeen": 1765422634698,
+      "lastSeen": 1765423659504
+    },
+    {
+      "id": "1706.03762",
+      "type": "arxiv",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 70,
+          "context": "Standard scaled dot-product attention mechanism. \"Attention Is All You Need\" Link: arxiv:1706.03762"
+        }
+      ],
+      "firstSeen": 1765422634698,
+      "lastSeen": 1765423659504
+    },
+    {
+      "id": "1810.04805",
+      "type": "arxiv",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 76,
+          "context": "Bidirectional Encoder Representations from Transformers. Great for NLP tasks. See: [arxiv:1810.04805]"
+        }
+      ],
+      "firstSeen": 1765422634698,
+      "lastSeen": 1765423659504
+    },
+    {
+      "id": "10.1038/nature14539",
+      "type": "doi",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 81,
+          "context": "The seminal Nature paper on Deep Learning by LeCun, Bengio, and Hinton. DOI: doi:10.1038/nature14539"
+        }
+      ],
+      "firstSeen": 1765422634698,
+      "lastSeen": 1765423659504
+    },
+    {
+      "id": "726791",
+      "type": "ieee",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 87,
+          "context": "Gradient-Based Learning Applied to Document Recognition. The classic CNN paper. IEEE Link: ieee:726791 IEEE URL: https://ieeexplore.ieee.org/document/726791"
+        }
+      ],
+      "firstSeen": 1765422634698,
+      "lastSeen": 1765423659504
+    },
+    {
+      "id": "https://scholar.google.com/scholar?q=deep+learning",
+      "type": "google_scholar",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 99,
+          "context": "Search for latest trends in \"Deep Learning\" Search: https://scholar.google.com/scholar?q=deep+learning"
+        }
+      ],
+      "firstSeen": 1765422634698,
+      "lastSeen": 1765423659504
+    },
+    {
+      "id": "10.30574/wjarr.2025.26.2.2015",
+      "type": "doi",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 21,
+          "context": "related_work: This implementation follows the paradigm of decentralized intelligence discussed in: doi:10.30574/wjarr.2025.26.2.2015 \"Edge Computing and AI Integration: New infrastructure paradigms\""
+        }
+      ],
+      "firstSeen": 1765423145518,
+      "lastSeen": 1765423659504
+    },
+    {
+      "id": "10.32996/jcsts.2025.7.5.92",
+      "type": "doi",
+      "title": "",
+      "files": [
+        {
+          "path": "research_showcase.py",
+          "lineNumber": 46,
+          "context": "citation: Logic derived from \"AI and Cloud Automation's Role in Sustainability\". See: doi:10.32996/jcsts.2025.7.5.92"
+        }
+      ],
+      "firstSeen": 1765423145518,
+      "lastSeen": 1765423659504
+    }
+  ],
+  "history": [
+    {
+      "commitHash": "55fa4c56520d15074d123da2a5661a5ad24d0a1c",
+      "timestamp": 1765422194274,
+      "message": "fix: actually register previewPdf command in extension.ts",
+      "papersAdded": [
+        "ieee:726791",
+        "arxiv:1810.04805",
+        "arxiv:2301.07041",
+        "arxiv:1706.03762",
+        "doi:10.1038/nature14539",
+        "semantic_scholar:220453896",
+        "google_scholar:https://scholar.google.com/scholar?q=deep+learning",
+        "doi:10.30574/wjarr.2025.26.2.2015",
+        "doi:10.32996/jcsts.2025.7.5.92"
+      ],
+      "papersRemoved": [
+        "ieee:726791",
+        "arxiv:1810.04805",
+        "semantic_scholar:220453896"
+      ],
+      "filesChanged": [
+        "research_showcase.py"
+      ]
+    }
+  ]
+}

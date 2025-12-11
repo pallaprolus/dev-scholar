@@ -349,12 +349,16 @@ export class MetadataClient {
     }
 
     // ==================== Semantic Scholar API ====================
-    private async fetchFromSemanticScholar(corpusId: string): Promise<PaperMetadata | null> {
+    private async fetchFromSemanticScholar(paperId: string): Promise<PaperMetadata | null> {
         await this.rateLimit('semanticScholar');
 
         try {
+            // Determine if ID is CorpusId (numeric) or S2PaperId (hex)
+            const isHex = /^[a-f0-9]{40}$/.test(paperId);
+            const apiId = isHex ? paperId : `CorpusId:${paperId}`;
+
             const response = await this.axiosInstance.get(
-                `https://api.semanticscholar.org/graph/v1/paper/CorpusId:${corpusId}`,
+                `https://api.semanticscholar.org/graph/v1/paper/${apiId}`,
                 {
                     params: {
                         fields: 'title,authors,abstract,year,citationCount,externalIds,publicationDate,journal'
@@ -368,7 +372,7 @@ export class MetadataClient {
                 const doi = paper.externalIds?.DOI;
 
                 return {
-                    id: corpusId,
+                    id: paperId,
                     type: 'semantic_scholar',
                     title: paper.title || 'Unknown',
                     authors: paper.authors?.map((a: any) => a.name) || [],
@@ -385,11 +389,11 @@ export class MetadataClient {
             }
         } catch (error: any) {
             if (error.response?.status === 404) {
-                console.warn(`Semantic Scholar: Paper not found for CorpusId:${corpusId}`);
+                console.warn(`Semantic Scholar: Paper not found for ${paperId}`);
             } else if (error.response?.status === 429) {
-                console.warn(`Semantic Scholar: Rate limit exceeded for ${corpusId}`);
+                console.warn(`Semantic Scholar: Rate limit exceeded for ${paperId}`);
             } else {
-                console.error(`Semantic Scholar API error for ${corpusId}:`, error.message);
+                console.error(`Semantic Scholar API error for ${paperId}:`, error.message);
             }
         }
         return null;

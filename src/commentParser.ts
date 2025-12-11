@@ -72,6 +72,12 @@ export class CommentParser {
             type: 'semantic_scholar',
             idGroup: 1
         },
+        // Semantic Scholar URL: .../paper/Title-Slug/HexID
+        {
+            pattern: /semanticscholar\.org\/paper\/[^/]+\/([a-f0-9]{40})/gi,
+            type: 'semantic_scholar',
+            idGroup: 1
+        },
         // OpenAlex ID: W2741809807
         {
             pattern: /(?:openalex[:\s]+|https:\/\/openalex\.org\/)(W\d+)/gi,

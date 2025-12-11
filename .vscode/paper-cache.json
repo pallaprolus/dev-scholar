@@ -1,0 +1,169 @@
+[
+  {
+    "id": "1905.11946",
+    "type": "arxiv",
+    "title": "EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+    "authors": [
+      "Mingxing Tan",
+      "Quoc V. Le"
+    ],
+    "summary": "Convolutional Neural Networks (ConvNets) are commonly developed at a fixed resource budget, and then scaled up for better accuracy if more resources are available. In this paper, we systematically study model scaling and identify that carefully balancing network depth, width, and resolution can lead to better performance. Based on this observation, we propose a new scaling method that uniformly scales all dimensions of depth/width/resolution using a simple yet highly effective compound coefficient. We demonstrate the effectiveness of this method on scaling up MobileNets and ResNet. To go even further, we use neural architecture search to design a new baseline network and scale it up to obtain a family of models, called EfficientNets, which achieve much better accuracy and efficiency than previous ConvNets. In particular, our EfficientNet-B7 achieves state-of-the-art 84.3% top-1 accuracy on ImageNet, while being 8.4x smaller and 6.1x faster on inference than the best existing ConvNet. Our EfficientNets also transfer well and achieve state-of-the-art accuracy on CIFAR-100 (91.7%), Flowers (98.8%), and 3 other transfer learning datasets, with an order of magnitude fewer parameters. Source code is at https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet.",
+    "published": "2019-05-28T17:05:32Z",
+    "updated": "2020-09-11T05:08:01Z",
+    "categories": [
+      "cs.LG",
+      "cs.CV",
+      "stat.ML"
+    ],
+    "pdfUrl": "https://arxiv.org/pdf/1905.11946.pdf",
+    "arxivUrl": "https://arxiv.org/abs/1905.11946",
+    "fetchedAt": 1765422513518
+  },
+  {
+    "id": "10.30574/wjarr.2025.26.2.2015",
+    "type": "doi",
+    "title": "Edge Computing and AI Integration: New infrastructure paradigms",
+    "authors": [
+      "Sudhakar Pallaprolu"
+    ],
+    "summary": "This article examines the transformative convergence of edge computing and artificial intelligence technologies, which is fundamentally reshaping infrastructure paradigms across industries. As computational intelligence moves closer to data sources, new architectures are emerging that address the critical requirements of latency-sensitive applications, data privacy concerns, and bandwidth optimization. The article explores the technological foundations enabling AI at the edge, including 1lightweight containerization, specialized hardware innovations, and energy-efficient computing approaches. The analysis extends to orchestration challenges in geographically distributed environments and the revolutionary potential of federated learning for privacy-preserving distributed intelligence. Through examination of real-world implementations across healthcare, manufacturing, and smart city contexts, the article identifies key performance metrics, optimization strategies, and lessons learned from early adopters. The discussion concludes with an assessment of emerging trends, research gaps, and standardization efforts shaping the future of edge-AI integration. This comprehensive overview provides Cloud Engineering professionals with essential insights for designing, deploying, and managing the next generation of intelligent distributed applications in an increasingly edge-centric computational landscape.",
+    "published": "2025-05-30",
+    "doi": "10.30574/wjarr.2025.26.2.2015",
+    "doiUrl": "https://doi.org/10.30574/wjarr.2025.26.2.2015",
+    "journal": "World Journal of Advanced Research and Reviews",
+    "volume": "26",
+    "pages": "3845-3852",
+    "fetchedAt": 1765422524784
+  },
+  {
+    "id": "https://scholar.google.com/scholar?q=deep+learning",
+    "type": "google_scholar",
+    "title": "Search: \"deep learning\"",
+    "authors": [
+      "Google Scholar"
+    ],
+    "summary": "Metadata fetching not supported for Google Scholar search results.",
+    "arxivUrl": "https://scholar.google.com/scholar?q=deep+learning",
+    "fetchedAt": 1765422664069
+  },
+  {
+    "id": "10.1038/nature14539",
+    "type": "doi",
+    "title": "Deep learning",
+    "authors": [
+      "Yann LeCun",
+      "Yoshua Bengio",
+      "Geoffrey Hinton"
+    ],
+    "summary": "",
+    "published": "2015-05-27",
+    "doi": "10.1038/nature14539",
+    "doiUrl": "https://doi.org/10.1038/nature14539",
+    "journal": "Nature",
+    "volume": "521",
+    "pages": "436-444",
+    "fetchedAt": 1765422664380
+  },
+  {
+    "id": "2301.07041",
+    "type": "arxiv",
+    "title": "Verifiable Fully Homomorphic Encryption",
+    "authors": [
+      "Alexander Viand",
+      "Christian Knabenhans",
+      "Anwar Hithnawi"
+    ],
+    "summary": "Fully Homomorphic Encryption (FHE) is seeing increasing real-world deployment to protect data in use by allowing computation over encrypted data. However, the same malleability that enables homomorphic computations also raises integrity issues, which have so far been mostly overlooked. While FHEs lack of integrity has obvious implications for correctness, it also has severe implications for confidentiality: a malicious server can leverage the lack of integrity to carry out interactive key-recovery attacks. As a result, virtually all FHE schemes and applications assume an honest-but-curious server who does not deviate from the protocol. In practice, however, this assumption is insufficient for a wide range of deployment scenarios. While there has been work that aims to address this gap, these have remained isolated efforts considering only aspects of the overall problem and fail to fully address the needs and characteristics of modern FHE schemes and applications. In this paper, we analyze existing FHE integrity approaches, present attacks that exploit gaps in prior work, and propose a new notion for maliciously-secure verifiable FHE. We then instantiate this new notion with a range of techniques, analyzing them and evaluating their performance in a range of different settings. We highlight their potential but also show where future work on tailored integrity solutions for FHE is still required.",
+    "published": "2023-01-17T17:50:26Z",
+    "updated": "2023-02-11T17:31:04Z",
+    "categories": [
+      "cs.CR"
+    ],
+    "pdfUrl": "https://arxiv.org/pdf/2301.07041.pdf",
+    "arxivUrl": "https://arxiv.org/abs/2301.07041",
+    "fetchedAt": 1765422664470
+  },
+  {
+    "id": "1706.03762",
+    "type": "arxiv",
+    "title": "Attention Is All You Need",
+    "authors": [
+      "Ashish Vaswani",
+      "Noam Shazeer",
+      "Niki Parmar",
+      "Jakob Uszkoreit",
+      "Llion Jones",
+      "Aidan N. Gomez",
+      "Lukasz Kaiser",
+      "Illia Polosukhin"
+    ],
+    "summary": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.",
+    "published": "2017-06-12T17:57:34Z",
+    "updated": "2023-08-02T00:41:18Z",
+    "categories": [
+      "cs.CL",
+      "cs.LG"
+    ],
+    "pdfUrl": "https://arxiv.org/pdf/1706.03762.pdf",
+    "arxivUrl": "https://arxiv.org/abs/1706.03762",
+    "fetchedAt": 1765422664777
+  },
+  {
+    "id": "1810.04805",
+    "type": "arxiv",
+    "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+    "authors": [
+      "Jacob Devlin",
+      "Ming-Wei Chang",
+      "Kenton Lee",
+      "Kristina Toutanova"
+    ],
+    "summary": "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5% (7.7% point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).",
+    "published": "2018-10-11T00:50:01Z",
+    "updated": "2019-05-24T20:37:26Z",
+    "categories": [
+      "cs.CL"
+    ],
+    "pdfUrl": "https://arxiv.org/pdf/1810.04805.pdf",
+    "arxivUrl": "https://arxiv.org/abs/1810.04805",
+    "fetchedAt": 1765422664787
+  },
+  {
+    "id": "726791",
+    "type": "ieee",
+    "title": "Gradient-based learning applied to document recognition",
+    "authors": [
+      "Yann LeCun",
+      "Léon Bottou",
+      "Yoshua Bengio",
+      "Patrick Haffner"
+    ],
+    "summary": "Multilayer neural networks trained with the back-propagation algorithm constitute the best example of a successful gradient based learning technique. Given an appropriate network architecture, gradient-based learning algorithms can be used to synthesize a complex decision surface that can classify high-dimensional patterns, such as handwritten characters, with minimal preprocessing. This paper reviews various methods applied to handwritten character recognition and compares them on a standard handwritten digit recognition task. Convolutional neural networks, which are specifically designed to deal with the variability of 2D shapes, are shown to outperform all other techniques. Real-life document recognition systems are composed of multiple modules including field extraction, segmentation recognition, and language modeling. A new learning paradigm, called graph transformer networks (GTN), allows such multimodule systems to be trained globally using gradient-based methods so as to minimize an overall performance measure. Two systems for online handwriting recognition are described. Experiments demonstrate the advantage of global training, and the flexibility of graph transformer networks. A graph transformer network for reading a bank cheque is also described. It uses convolutional neural network character recognizers combined with global training techniques to provide record accuracy on business and personal cheques. It is deployed commercially and reads several million cheques per day.",
+    "published": "1998-01-01",
+    "journal": "Proceedings of the IEEE",
+    "doi": "https://doi.org/10.1109/5.726791",
+    "doiUrl": "https://doi.org/10.1109/5.726791",
+    "pdfUrl": "https://hal.science/hal-03926082/document",
+    "citationCount": 55110,
+    "categories": [
+      "Computer science",
+      "Artificial intelligence",
+      "Convolutional neural network",
+      "Intelligent character recognition",
+      "Handwriting recognition",
+      "Transformer",
+      "Artificial neural network",
+      "Pattern recognition (psychology)",
+      "Handwriting",
+      "Preprocessor",
+      "Deep learning",
+      "Graph",
+      "Speech recognition",
+      "Machine learning",
+      "Feature extraction",
+      "Character recognition",
+      "Theoretical computer science"
+    ],
+    "fetchedAt": 1765422665070
+  }
+]
