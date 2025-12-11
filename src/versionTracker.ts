@@ -14,10 +14,11 @@ interface PaperRefsFile {
 
 interface PaperEntry {
     id: string;
-    type: 'arxiv' | 'doi' | 'semantic_scholar';
+    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee';
+    title: string;
+    firstSeen: number;
+    lastSeen: number;
     files: FileReference[];
-    firstSeen: string;
-    lastSeen: string;
     tags?: string[];
 }
 
@@ -29,7 +30,7 @@ interface FileReference {
 
 interface VersionHistoryEntry {
     commitHash: string;
-    timestamp: string;
+    timestamp: number;
     message?: string;
     papersAdded: string[];
     papersRemoved: string[];
@@ -126,7 +127,7 @@ export class VersionTracker {
 
         const refs = this.loadPaperRefs();
         const relativePath = path.relative(this.workspaceRoot, fileUri.fsPath);
-        const now = new Date().toISOString();
+        const now = Date.now(); // Changed to number
         const gitInfo = this.getGitInfo();
 
         const previousPaperIds = new Set(
@@ -150,6 +151,7 @@ export class VersionTracker {
                 entry = {
                     id: paper.id,
                     type: paper.type,
+                    title: '', // Placeholder, will be populated on metadata fetch
                     files: [],
                     firstSeen: now,
                     lastSeen: now
@@ -159,20 +161,22 @@ export class VersionTracker {
             }
 
             // Update file reference
-            const fileRefIndex = entry.files.findIndex(f => f.path === relativePath);
-            const fileRef: FileReference = {
-                path: relativePath,
-                lineNumber: paper.lineNumber,
-                context: paper.context
-            };
+            if (entry) {
+                const fileRefIndex = entry.files.findIndex(f => f.path === relativePath);
+                const fileRef: FileReference = {
+                    path: relativePath,
+                    lineNumber: paper.lineNumber + 1, // Changed to lineNumber + 1
+                    context: paper.context // Kept context, as it was not explicitly removed in the instruction
+                };
 
-            if (fileRefIndex >= 0) {
-                entry.files[fileRefIndex] = fileRef;
-            } else {
-                entry.files.push(fileRef);
+                if (fileRefIndex >= 0) {
+                    entry.files[fileRefIndex] = fileRef;
+                } else {
+                    entry.files.push(fileRef);
+                }
+
+                entry.lastSeen = now;
             }
-
-            entry.lastSeen = now;
         }
 
         // Find removed papers

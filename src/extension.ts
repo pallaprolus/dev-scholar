@@ -98,7 +98,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 const items = metadata.map(m => ({
                     label: m.title,
                     description: m.authors.slice(0, 2).join(', '),
-                    detail: `${m.type} | ${new Date(m.published).getFullYear()}`,
+                    detail: `${m.type} | ${m.published ? new Date(m.published).getFullYear() : 'n.d.'}`,
                     metadata: m
                 }));
 

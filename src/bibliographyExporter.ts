@@ -200,10 +200,10 @@ export class BibliographyExporter {
         return `${cleanAuthor}${year}${titleWord}`;
     }
 
-    private getYear(published: string): number | string {
-        if (!published) return 'n.d.';
-        const year = new Date(published).getFullYear();
-        return isNaN(year) ? 'n.d.' : year;
+    private getYear(dateStr?: string): string {
+        if (!dateStr) return 'n.d.';
+        const date = new Date(dateStr);
+        return isNaN(date.getTime()) ? 'n.d.' : date.getFullYear().toString();
     }
 
     private escapeBibTeX(text: string): string {

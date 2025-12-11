@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 export interface PaperReference {
     id: string;
-    type: 'arxiv' | 'doi' | 'semantic_scholar';
+    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee';
     lineNumber: number;
     columnNumber: number;
     rawText: string;
@@ -72,6 +72,24 @@ export class CommentParser {
             type: 'semantic_scholar',
             idGroup: 1
         },
+        // OpenAlex ID: W2741809807
+        {
+            pattern: /(?:openalex[:\s]+|https:\/\/openalex\.org\/)(W\d+)/gi,
+            type: 'openalex',
+            idGroup: 1
+        },
+        // PubMed ID: pmid:12345678
+        {
+            pattern: /(?:pmid|pubmed)[:\s]+(\d+)/gi,
+            type: 'pmid',
+            idGroup: 1
+        },
+        // IEEE Document ID: ieee:1234567
+        {
+            pattern: /(?:ieeexplore\.ieee\.org\/document\/|ieee[:\s]+)(\d+)/gi,
+            type: 'ieee',
+            idGroup: 1
+        }
     ];
 
     // Comment patterns for different languages

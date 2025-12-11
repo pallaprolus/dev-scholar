@@ -4,14 +4,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import NodeCache from 'node-cache';
 import { PaperReference } from './commentParser';
+import { OpenAlexClient } from './openAlexClient';
 
 export interface PaperMetadata {
     id: string;
-    type: 'arxiv' | 'doi' | 'semantic_scholar';
+    type: 'arxiv' | 'doi' | 'semantic_scholar' | 'openalex' | 'pmid' | 'ieee';
     title: string;
     authors: string[];
     summary: string;
-    published: string;
+    published?: string;
     updated?: string;
     categories?: string[];
     arxivUrl?: string;
@@ -34,6 +35,8 @@ export class MetadataClient {
     private cache: NodeCache;
     private fileCache: string;
     private axiosInstance: AxiosInstance;
+    private context: vscode.ExtensionContext;
+    private openAlexClient: OpenAlexClient;
 
     // Rate limiters for each API (requests per second limits)
     private rateLimiters: Map<string, RateLimiter> = new Map([
@@ -43,8 +46,13 @@ export class MetadataClient {
     ]);
 
     constructor(context: vscode.ExtensionContext) {
-        // In-memory cache with 1 hour TTL
-        this.cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
+        this.context = context;
+        this.openAlexClient = new OpenAlexClient();
+
+        // In-memory cache with configurable TTL
+        const config = vscode.workspace.getConfiguration('devscholar');
+        const ttlDays = config.get<number>('cacheMaxAge') || 7;
+        this.cache = new NodeCache({ stdTTL: ttlDays * 24 * 60 * 60 });
 
         // File-based persistent cache
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -56,11 +64,11 @@ export class MetadataClient {
         this.axiosInstance = axios.create({
             timeout: 10000,
             headers: {
-                'User-Agent': 'ResearchPaperLinker/1.0 (VS Code Extension; mailto:your-email@example.com)'
+                'User-Agent': 'DevScholar/0.3.1 (VS Code Extension; mailto:your-email@example.com)'
             }
         });
 
-        this.loadFileCache();
+        this.loadDiskCache();
     }
 
     async fetchMetadata(papers: PaperReference[]): Promise<PaperMetadata[]> {
@@ -79,6 +87,7 @@ export class MetadataClient {
             // Queue fetch based on paper type
             const fetchPromise = this.fetchByType(paper).then(metadata => {
                 if (metadata) {
+                    this.cache.set(cacheKey, metadata);
                     results.push(metadata);
                 }
             });
@@ -87,19 +96,41 @@ export class MetadataClient {
 
         // Wait for all fetches to complete
         await Promise.all(fetchPromises);
+        this.saveDiskCache();
         return results;
     }
 
     private async fetchByType(paper: PaperReference): Promise<PaperMetadata | null> {
-        switch (paper.type) {
-            case 'arxiv':
-                return this.fetchFromArxiv(paper.id, paper.version);
-            case 'doi':
-                return this.fetchFromCrossRef(paper.id);
-            case 'semantic_scholar':
-                return this.fetchFromSemanticScholar(paper.id);
-            default:
-                return null;
+        try {
+            switch (paper.type) {
+                case 'arxiv':
+                    return this.fetchFromArxiv(paper.id, paper.version);
+                case 'doi':
+                    return this.fetchFromCrossRef(paper.id);
+                case 'semantic_scholar':
+                    return this.fetchFromSemanticScholar(paper.id);
+                case 'openalex':
+                case 'pmid':
+                    const oaMeta = await this.openAlexClient.fetchMetadata(paper.id, paper.type);
+                    return oaMeta ? { ...oaMeta, summary: oaMeta.summary || '', fetchedAt: Date.now() } : null;
+                case 'ieee':
+                    return {
+                        id: paper.id,
+                        type: 'ieee',
+                        title: `IEEE Document ${paper.id}`,
+                        authors: ['Unknown'],
+                        summary: '',
+                        journal: 'IEEE Xplore',
+                        pdfUrl: `https://ieeexplore.ieee.org/document/${paper.id}`,
+                        doiUrl: `https://ieeexplore.ieee.org/document/${paper.id}`,
+                        fetchedAt: Date.now()
+                    };
+                default:
+                    return null;
+            }
+        } catch (error) {
+            console.error(`Error fetching ${paper.type}:${paper.id}`, error);
+            return null;
         }
     }
 
@@ -133,7 +164,7 @@ export class MetadataClient {
 
             const entry = this.parseArxivXml(response.data);
             if (entry && entry.title) {
-                const metadata: PaperMetadata = {
+                return {
                     id: arxivId,
                     type: 'arxiv',
                     title: entry.title,
@@ -148,9 +179,6 @@ export class MetadataClient {
                     doiUrl: entry.doi ? `https://doi.org/${entry.doi}` : undefined,
                     fetchedAt: Date.now()
                 };
-
-                this.cacheMetadata(metadata);
-                return metadata;
             }
         } catch (error: any) {
             console.warn(`arXiv API error for ${arxivId}:`, error.message);
@@ -160,34 +188,20 @@ export class MetadataClient {
     }
 
     private parseArxivXml(xmlData: string): any {
-        // Check if we got valid results
         if (xmlData.includes('<opensearch:totalResults>0</opensearch:totalResults>')) {
             return null;
         }
 
-        // Find the entry block
         const entryMatch = xmlData.match(/<entry>([\s\S]*?)<\/entry>/);
         if (!entryMatch) return null;
 
         const entry = entryMatch[1];
-
-        // Parse title (skip feed title, get entry title)
         const titleMatch = entry.match(/<title[^>]*>([\s\S]*?)<\/title>/);
-
-        // Parse summary/abstract
         const summaryMatch = entry.match(/<summary[^>]*>([\s\S]*?)<\/summary>/);
-
-        // Parse dates
         const publishedMatch = entry.match(/<published>([^<]+)<\/published>/);
         const updatedMatch = entry.match(/<updated>([^<]+)<\/updated>/);
-
-        // Parse authors
         const authorMatches = [...entry.matchAll(/<author>\s*<name>([^<]+)<\/name>/g)];
-
-        // Parse categories
         const categoryMatches = [...entry.matchAll(/<category[^>]*term="([^"]+)"/g)];
-
-        // Parse DOI if present
         const doiMatch = entry.match(/<arxiv:doi[^>]*>([^<]+)<\/arxiv:doi>/);
 
         return {
@@ -207,14 +221,12 @@ export class MetadataClient {
 
         try {
             const response = await this.axiosInstance.get(`https://api.crossref.org/works/${encodeURIComponent(doi)}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             });
 
             const work = response.data?.message;
             if (work) {
-                const metadata: PaperMetadata = {
+                return {
                     id: doi,
                     type: 'doi',
                     title: Array.isArray(work.title) ? work.title[0] : work.title || 'Unknown',
@@ -228,9 +240,6 @@ export class MetadataClient {
                     pages: work.page,
                     fetchedAt: Date.now()
                 };
-
-                this.cacheMetadata(metadata);
-                return metadata;
             }
         } catch (error: any) {
             if (error.response?.status === 404) {
@@ -239,15 +248,12 @@ export class MetadataClient {
                 console.error(`CrossRef API error for ${doi}:`, error.message);
             }
         }
-
         return null;
     }
 
     private parseCrossRefAuthors(authors: any[]): string[] {
         return authors.map(a => {
-            if (a.given && a.family) {
-                return `${a.given} ${a.family}`;
-            }
+            if (a.given && a.family) return `${a.given} ${a.family}`;
             return a.name || a.family || 'Unknown';
         });
     }
@@ -286,7 +292,7 @@ export class MetadataClient {
                 const arxivId = paper.externalIds?.ArXiv;
                 const doi = paper.externalIds?.DOI;
 
-                const metadata: PaperMetadata = {
+                return {
                     id: corpusId,
                     type: 'semantic_scholar',
                     title: paper.title || 'Unknown',
@@ -301,9 +307,6 @@ export class MetadataClient {
                     pdfUrl: arxivId ? `https://arxiv.org/pdf/${arxivId}.pdf` : undefined,
                     fetchedAt: Date.now()
                 };
-
-                this.cacheMetadata(metadata);
-                return metadata;
             }
         } catch (error: any) {
             if (error.response?.status === 404) {
@@ -314,26 +317,19 @@ export class MetadataClient {
                 console.error(`Semantic Scholar API error for ${corpusId}:`, error.message);
             }
         }
-
         return null;
     }
 
     // ==================== Caching ====================
-    private cacheMetadata(metadata: PaperMetadata): void {
-        const cacheKey = `${metadata.type}:${metadata.id}`;
-        this.cache.set(cacheKey, metadata);
-        this.saveToFileCache(metadata);
-    }
-
-    private loadFileCache(): void {
+    private loadDiskCache(): void {
         try {
             if (fs.existsSync(this.fileCache)) {
                 const data = fs.readFileSync(this.fileCache, 'utf-8');
                 const papers = JSON.parse(data) as PaperMetadata[];
-
-                // Load into memory cache, respecting TTL
                 const now = Date.now();
-                const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+                // 7 days default
+                const ttlDays = vscode.workspace.getConfiguration('devscholar').get<number>('cacheMaxAge') || 7;
+                const maxAge = ttlDays * 24 * 60 * 60 * 1000;
 
                 papers.forEach(p => {
                     if (now - p.fetchedAt < maxAge) {
@@ -347,32 +343,17 @@ export class MetadataClient {
         }
     }
 
-    private saveToFileCache(metadata: PaperMetadata): void {
+    private saveDiskCache(): void {
         try {
             const dir = path.dirname(this.fileCache);
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
             let papers: PaperMetadata[] = [];
-            if (fs.existsSync(this.fileCache)) {
-                const data = fs.readFileSync(this.fileCache, 'utf-8');
-                papers = JSON.parse(data);
-            }
-
-            const cacheKey = `${metadata.type}:${metadata.id}`;
-            const index = papers.findIndex(p => `${p.type}:${p.id}` === cacheKey);
-
-            if (index >= 0) {
-                papers[index] = metadata;
-            } else {
-                papers.push(metadata);
-            }
-
-            // Prune old entries (keep last 500)
-            if (papers.length > 500) {
-                papers.sort((a, b) => b.fetchedAt - a.fetchedAt);
-                papers = papers.slice(0, 500);
+            // Merge valid memory cache into disk cache
+            const keys = this.cache.keys();
+            for (const key of keys) {
+                const p = this.cache.get<PaperMetadata>(key);
+                if (p) papers.push(p);
             }
 
             fs.writeFileSync(this.fileCache, JSON.stringify(papers, null, 2));
@@ -381,24 +362,19 @@ export class MetadataClient {
         }
     }
 
-    // Get cached metadata without fetching
     getCached(type: string, id: string): PaperMetadata | undefined {
         return this.cache.get(`${type}:${id}`);
     }
 
-    // Clear all caches
     clearCache(): void {
         this.cache.flushAll();
         try {
-            if (fs.existsSync(this.fileCache)) {
-                fs.unlinkSync(this.fileCache);
-            }
+            if (fs.existsSync(this.fileCache)) fs.unlinkSync(this.fileCache);
         } catch (error) {
             console.error('Error clearing file cache:', error);
         }
     }
 
-    // Get cache statistics
     getCacheStats(): { memoryCount: number; fileCount: number } {
         let fileCount = 0;
         try {
@@ -407,7 +383,6 @@ export class MetadataClient {
                 fileCount = JSON.parse(data).length;
             }
         } catch { }
-
         return {
             memoryCount: this.cache.keys().length,
             fileCount
@@ -415,5 +390,4 @@ export class MetadataClient {
     }
 }
 
-// Keep backward compatibility alias
 export { MetadataClient as ArxivClient };
