@@ -2,7 +2,7 @@
   "name": "dev-scholar",
   "displayName": "DevScholar",
   "description": "Your Code, Connected to Knowledge. Automatically link, preview, and manage research papers (arXiv, DOI) directly inside VS Code.",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "publisher": "pallaprolus",
   "repository": {
     "type": "git",
@@ -30,6 +30,12 @@
   "icon": "images/icon.png",
   "contributes": {
     "commands": [
+      {
+        "command": "devscholar.searchPapers",
+        "title": "Search & Cite Paper",
+        "category": "Research Papers",
+        "icon": "$(search)"
+      },
       {
         "command": "devscholar.parseCurrentFile",
         "title": "Parse Research Papers in Current File",
@@ -179,6 +185,12 @@
       ]
     },
     "keybindings": [
+      {
+        "command": "devscholar.searchPapers",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
+        "when": "editorTextFocus"
+      },
       {
         "command": "devscholar.parseCurrentFile",
         "key": "ctrl+shift+p",

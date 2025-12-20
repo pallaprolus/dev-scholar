@@ -69,11 +69,15 @@ export class PaperCodeLensProvider implements vscode.CodeLensProvider {
                     arguments: [paper]
                 }));
 
-                codeLenses.push(new vscode.CodeLens(range, {
-                    title: '$(eye) Preview PDF',
-                    command: 'devscholar.previewPdf',
-                    arguments: [paper]
-                }));
+                // Only show Preview PDF if PDF is available
+                // arXiv always has PDFs, DOIs may or may not have open access PDFs
+                if (paper.type === 'arxiv' || (cached && cached.pdfUrl)) {
+                    codeLenses.push(new vscode.CodeLens(range, {
+                        title: '$(eye) Preview PDF',
+                        command: 'devscholar.previewPdf',
+                        arguments: [paper]
+                    }));
+                }
 
                 codeLenses.push(new vscode.CodeLens(range, {
                     title: '$(clippy) Copy Citation',

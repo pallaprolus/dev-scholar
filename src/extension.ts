@@ -8,6 +8,8 @@ import { VersionTracker } from './versionTracker';
 import { FileWatcher } from './fileWatcher';
 import { PaperCodeLensProvider, PaperDecorationProvider, PaperStatusBarItem } from './codeLensProvider';
 import { PdfPreviewManager } from './pdfPreview';
+import { CitationCompletionProvider } from './citationCompletionProvider';
+import { PaperSearchPanel } from './paperSearchPanel';
 
 let commentParser: CommentParser;
 let metadataClient: MetadataClient;
@@ -19,7 +21,9 @@ let fileWatcher: FileWatcher;
 let codeLensProvider: PaperCodeLensProvider;
 let decorationProvider: PaperDecorationProvider;
 let statusBarItem: PaperStatusBarItem;
-let pdfPreviewManager: PdfPreviewManager; // Declare pdfPreviewManager
+let pdfPreviewManager: PdfPreviewManager;
+let citationCompletionProvider: CitationCompletionProvider;
+let paperSearchPanel: PaperSearchPanel;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('DevScholar is now active');
@@ -37,7 +41,9 @@ export async function activate(context: vscode.ExtensionContext) {
     codeLensProvider = new PaperCodeLensProvider(commentParser, metadataClient);
     decorationProvider = new PaperDecorationProvider(commentParser);
     statusBarItem = new PaperStatusBarItem(commentParser);
-    pdfPreviewManager = new PdfPreviewManager(context); // Initialize manager
+    pdfPreviewManager = new PdfPreviewManager(context);
+    citationCompletionProvider = new CitationCompletionProvider();
+    paperSearchPanel = new PaperSearchPanel();
 
     // Register hover provider
     context.subscriptions.push(
@@ -47,6 +53,56 @@ export async function activate(context: vscode.ExtensionContext) {
     // Register CodeLens provider
     context.subscriptions.push(
         vscode.languages.registerCodeLensProvider('*', codeLensProvider)
+    );
+
+    // Register Citation Completion provider (Click-to-Cite)
+    // We register with ':' as trigger, but also handle typing via document change listener
+    context.subscriptions.push(
+        vscode.languages.registerCompletionItemProvider(
+            '*',
+            citationCompletionProvider,
+            ':' // Initial trigger on ':'
+        )
+    );
+
+    // Auto-trigger completion when typing in cite: pattern
+    // This ensures the dropdown appears/updates as user types their search query
+    let citeDebounceTimer: NodeJS.Timeout | undefined;
+    let lastTriggerTime = 0;
+    const MIN_TRIGGER_INTERVAL = 300; // Minimum ms between triggers
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeTextDocument(event => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor || event.document !== editor.document) return;
+
+            // Only process if there are content changes (not just cursor moves)
+            if (event.contentChanges.length === 0) return;
+
+            // Clear previous debounce
+            if (citeDebounceTimer) {
+                clearTimeout(citeDebounceTimer);
+            }
+
+            // Debounce the trigger
+            citeDebounceTimer = setTimeout(() => {
+                // Get current cursor position
+                const position = editor.selection.active;
+                const lineText = event.document.lineAt(position.line).text;
+                const linePrefix = lineText.substring(0, position.character);
+
+                // Check if we're in a cite: pattern with at least 3 characters of query
+                const match = linePrefix.match(/(?:#cite:|@cite:|cite:)\s*(.+)$/i);
+                if (match && match[1].trim().length >= 3) {
+                    const now = Date.now();
+                    // Avoid triggering too frequently
+                    if (now - lastTriggerTime >= MIN_TRIGGER_INTERVAL) {
+                        lastTriggerTime = now;
+                        vscode.commands.executeCommand('editor.action.triggerSuggest');
+                    }
+                }
+            }, 150); // 150ms debounce
+        })
     );
 
     // Register file watcher callbacks
@@ -86,6 +142,43 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     // ==================== Commands ====================
+
+    // Search and cite papers (Click-to-Cite) - keyboard shortcut
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.searchPapers', async () => {
+            const editor = vscode.window.activeTextEditor;
+            const citation = await paperSearchPanel.show();
+
+            if (citation && editor) {
+                // Insert citation at cursor position
+                await editor.edit(editBuilder => {
+                    editBuilder.insert(editor.selection.active, citation);
+                });
+            }
+        })
+    );
+
+    // Search and insert - triggered by @cite or cite: autocomplete
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.searchAndInsert', async (replaceRange?: vscode.Range) => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+
+            const citation = await paperSearchPanel.show();
+
+            if (citation) {
+                await editor.edit(editBuilder => {
+                    if (replaceRange) {
+                        // Replace the trigger text (@cite or cite:) with the citation
+                        editBuilder.replace(replaceRange, citation);
+                    } else {
+                        // Fallback: insert at cursor
+                        editBuilder.insert(editor.selection.active, citation);
+                    }
+                });
+            }
+        })
+    );
 
     // Parse current file
     context.subscriptions.push(
