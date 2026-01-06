@@ -18,6 +18,7 @@ class EdgeNode:
     #
     # related_work:
     # This implementation follows the paradigm of decentralized intelligence 
+    # cite:Attention is all you
     # discussed in: doi:10.30574/wjarr.2025.26.2.2015
     # "Edge Computing and AI Integration: New infrastructure paradigms"
     
@@ -44,6 +45,8 @@ class CarbonAwareScheduler:
     # citation:
     # Logic derived from "AI and Cloud Automation's Role in Sustainability".
     # See: doi:10.32996/jcsts.2025.7.5.92
+    # "Artificial intelligence in retina"
+    # doi:10.1016/j.preteyeres.2018.07.004
     
     def get_carbon_intensity(self, region):
         # Mock API call to get gCO2eq/kWh
