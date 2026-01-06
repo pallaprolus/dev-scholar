@@ -2,7 +2,7 @@
   "name": "dev-scholar",
   "displayName": "DevScholar",
   "description": "Your Code, Connected to Knowledge. Automatically link, preview, and manage research papers (arXiv, DOI) directly inside VS Code.",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "publisher": "pallaprolus",
   "repository": {
     "type": "git",
@@ -49,6 +49,26 @@
       {
         "command": "devscholar.syncWithZotero",
         "title": "Sync with Zotero",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.setZoteroApiKey",
+        "title": "Set Zotero API Key",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.clearZoteroApiKey",
+        "title": "Clear Zotero API Key",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.importFromZotero",
+        "title": "Import from Zotero",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.linkZoteroCollection",
+        "title": "Link Zotero Collection",
         "category": "Research Papers"
       },
       {
@@ -128,12 +148,25 @@
         "devscholar.zoteroApiKey": {
           "type": "string",
           "default": "",
-          "description": "Zotero API key for syncing papers"
+          "description": "(Deprecated) API key is now stored securely. Use 'Set Zotero API Key' command instead.",
+          "deprecationMessage": "API key is now stored securely in your system keychain. Use the 'Set Zotero API Key' command from the Command Palette."
         },
         "devscholar.zoteroUserId": {
           "type": "string",
           "default": "",
-          "description": "Zotero user ID for syncing papers"
+          "description": "Zotero user ID (find at zotero.org/settings/keys)"
+        },
+        "devscholar.zoteroCollection": {
+          "type": "string",
+          "default": "",
+          "description": "Linked Zotero collection key for this workspace",
+          "scope": "resource"
+        },
+        "devscholar.zoteroCollectionName": {
+          "type": "string",
+          "default": "",
+          "description": "Linked Zotero collection name (display only)",
+          "scope": "resource"
         },
         "devscholar.trackGitVersions": {
           "type": "boolean",

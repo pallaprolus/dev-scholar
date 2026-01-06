@@ -48,6 +48,25 @@ Hover over any link to see:
 -   **Copy BibTeX**: Right-click or use the command palette to copy the BibTeX citation for any paper.
 -   **Export All**: Generate a full bibliography for all papers referenced in your current file.
 
+### 6. 🔄 Two-Way Zotero Sync (NEW in v0.6.0!)
+Bidirectional sync between your code and Zotero library:
+
+**Setup:**
+1.  Get your Zotero API key from [zotero.org/settings/keys](https://www.zotero.org/settings/keys)
+2.  Find your User ID on the same page (shown as "Your userID for API calls is XXXXXXX")
+3.  Open VS Code Settings and search for "devscholar zotero"
+4.  Enable Zotero integration and set your User ID
+5.  Run **"Set Zotero API Key"** from the Command Palette
+
+**Features:**
+-   **Export to Zotero**: Run "Sync with Zotero" to push papers from your code to Zotero
+-   **Import from Zotero**: Run "Import from Zotero" to select papers and insert citations
+-   **Collection Linking**: Run "Link Zotero Collection" to associate a workspace with a Zotero collection
+-   **Duplicate Detection**: Papers already in Zotero are skipped during export
+-   **Workspace Tagging**: Exported papers are tagged with your workspace name (e.g., `DevScholar:my-project`)
+
+> **Security**: Your API key is stored securely in your system's keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) — not in plain text settings files.
+
 ## 🚀 Getting Started
 
 1.  **Install** the extension.
@@ -65,9 +84,10 @@ Hover over any link to see:
 -   [x] **v0.4.5**: Semantic Scholar Integration
 -   [x] **v0.4.6**: Robust DOI PDF Preview
 -   [x] **v0.5.0**: Click-to-Cite (search papers by name, auto-complete citations)
+-   [x] **v0.5.1**: Zotero Export (sync papers to Zotero library)
+-   [x] **v0.6.0**: Two-Way Zotero Sync (import, collections, duplicate detection)
 -   [ ] **Future**:
     -   Google Scholar Integration (Smart Search Fallback)
-    -   Two-way Zotero Sync
     -   Local PDF Annotation
 
 ## 🤝 Contributing

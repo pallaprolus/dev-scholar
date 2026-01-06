@@ -10,6 +10,7 @@ __pycache__/
 *.pyc
 
 .claude/
+AGENT.md
 convert_to_html.py
 simple_convert.py
 README.pdf

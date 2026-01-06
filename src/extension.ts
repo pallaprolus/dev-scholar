@@ -248,6 +248,8 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('devscholar.syncWithZotero', async () => {
             const config = vscode.workspace.getConfiguration('devscholar');
+
+            // Check if Zotero is enabled
             if (!config.get<boolean>('zoteroEnabled')) {
                 const enable = await vscode.window.showWarningMessage(
                     'Zotero integration is not enabled. Would you like to configure it?',
@@ -255,6 +257,35 @@ export async function activate(context: vscode.ExtensionContext) {
                 );
                 if (enable === 'Configure') {
                     await vscode.commands.executeCommand('workbench.action.openSettings', 'devscholar.zotero');
+                }
+                return;
+            }
+
+            // Check for API key (now stored securely)
+            let apiKey = await zoteroSync.getApiKey();
+            if (!apiKey) {
+                const setup = await vscode.window.showWarningMessage(
+                    'Zotero API key not found. Would you like to set it up now?',
+                    'Enter API Key', 'Cancel'
+                );
+                if (setup === 'Enter API Key') {
+                    const success = await zoteroSync.promptForApiKey();
+                    if (!success) return;
+                    apiKey = await zoteroSync.getApiKey();
+                } else {
+                    return;
+                }
+            }
+
+            // Check for user ID
+            const userId = config.get<string>('zoteroUserId');
+            if (!userId) {
+                const setup = await vscode.window.showWarningMessage(
+                    'Zotero User ID not configured. Please set it in settings.',
+                    'Open Settings', 'Cancel'
+                );
+                if (setup === 'Open Settings') {
+                    await vscode.commands.executeCommand('workbench.action.openSettings', 'devscholar.zoteroUserId');
                 }
                 return;
             }
@@ -267,6 +298,9 @@ export async function activate(context: vscode.ExtensionContext) {
                 vscode.window.showWarningMessage('No papers to sync');
                 return;
             }
+
+            // Get linked collection (if any)
+            const collectionKey = config.get<string>('zoteroCollection');
 
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
@@ -282,10 +316,170 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
 
                 progress.report({ message: 'Sending to Zotero...' });
-                await zoteroSync.syncPapers(metadata);
+                await zoteroSync.syncPapers(metadata, collectionKey);
             });
+        })
+    );
 
-            vscode.window.showInformationMessage(`Synced ${papers.length} papers with Zotero`);
+    // Import from Zotero
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.importFromZotero', async () => {
+            const config = vscode.workspace.getConfiguration('devscholar');
+
+            // Check if Zotero is enabled
+            if (!config.get<boolean>('zoteroEnabled')) {
+                const enable = await vscode.window.showWarningMessage(
+                    'Zotero integration is not enabled. Would you like to configure it?',
+                    'Configure', 'Cancel'
+                );
+                if (enable === 'Configure') {
+                    await vscode.commands.executeCommand('workbench.action.openSettings', 'devscholar.zotero');
+                }
+                return;
+            }
+
+            // Check for API key
+            const apiKey = await zoteroSync.getApiKey();
+            if (!apiKey) {
+                const setup = await vscode.window.showWarningMessage(
+                    'Zotero API key not found. Would you like to set it up now?',
+                    'Enter API Key', 'Cancel'
+                );
+                if (setup === 'Enter API Key') {
+                    await zoteroSync.promptForApiKey();
+                }
+                return;
+            }
+
+            // Check for user ID
+            const userId = config.get<string>('zoteroUserId');
+            if (!userId) {
+                vscode.window.showWarningMessage('Zotero User ID not configured. Please set it in settings.');
+                return;
+            }
+
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                vscode.window.showWarningMessage('No active editor');
+                return;
+            }
+
+            // Get linked collection
+            const collectionKey = config.get<string>('zoteroCollection');
+
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: 'Fetching papers from Zotero...',
+                cancellable: false
+            }, async (progress) => {
+                try {
+                    // Fetch items from Zotero
+                    const items = collectionKey
+                        ? await zoteroSync.fetchItemsFromCollection(collectionKey)
+                        : await zoteroSync.fetchAllItems();
+
+                    if (items.length === 0) {
+                        vscode.window.showInformationMessage(
+                            collectionKey
+                                ? 'No papers found in linked collection'
+                                : 'No papers found in Zotero library'
+                        );
+                        return;
+                    }
+
+                    // Convert to PaperMetadata for display
+                    const papers = items.map(item => zoteroSync.mapFromZoteroItem(item));
+
+                    // Show multi-select QuickPick
+                    const quickPickItems = papers.map(p => ({
+                        label: p.title,
+                        description: p.authors.slice(0, 2).join(', '),
+                        detail: `${p.type}:${p.id}`,
+                        picked: false,
+                        paper: p
+                    }));
+
+                    const selected = await vscode.window.showQuickPick(quickPickItems, {
+                        canPickMany: true,
+                        placeHolder: 'Select papers to insert as citations',
+                        title: 'Import from Zotero'
+                    });
+
+                    if (!selected || selected.length === 0) return;
+
+                    // Insert citations at cursor
+                    const languageId = editor.document.languageId;
+                    const citations = selected.map(s =>
+                        zoteroSync.formatCitation(s.paper, languageId)
+                    ).join('\n\n');
+
+                    await editor.edit(editBuilder => {
+                        editBuilder.insert(editor.selection.active, citations + '\n');
+                    });
+
+                    vscode.window.showInformationMessage(`Inserted ${selected.length} citation(s)`);
+                } catch (error: any) {
+                    vscode.window.showErrorMessage(`Failed to fetch from Zotero: ${error.message}`);
+                }
+            });
+        })
+    );
+
+    // Link Zotero Collection
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.linkZoteroCollection', async () => {
+            const config = vscode.workspace.getConfiguration('devscholar');
+
+            // Check if Zotero is enabled and configured
+            if (!config.get<boolean>('zoteroEnabled')) {
+                vscode.window.showWarningMessage('Please enable Zotero integration first in settings.');
+                return;
+            }
+
+            const apiKey = await zoteroSync.getApiKey();
+            if (!apiKey) {
+                const setup = await vscode.window.showWarningMessage(
+                    'Zotero API key not found. Would you like to set it up now?',
+                    'Enter API Key', 'Cancel'
+                );
+                if (setup === 'Enter API Key') {
+                    await zoteroSync.promptForApiKey();
+                }
+                return;
+            }
+
+            try {
+                const collection = await zoteroSync.promptForCollection();
+                if (collection) {
+                    // Save to workspace settings
+                    await config.update('zoteroCollection', collection.key, vscode.ConfigurationTarget.Workspace);
+                    await config.update('zoteroCollectionName', collection.name, vscode.ConfigurationTarget.Workspace);
+                    vscode.window.showInformationMessage(`Linked to Zotero collection: ${collection.name}`);
+                }
+            } catch (error: any) {
+                vscode.window.showErrorMessage(`Failed to fetch collections: ${error.message}`);
+            }
+        })
+    );
+
+    // Set Zotero API Key (securely)
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.setZoteroApiKey', async () => {
+            await zoteroSync.promptForApiKey();
+        })
+    );
+
+    // Clear Zotero API Key
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.clearZoteroApiKey', async () => {
+            const confirm = await vscode.window.showWarningMessage(
+                'Are you sure you want to remove your Zotero API key?',
+                'Remove', 'Cancel'
+            );
+            if (confirm === 'Remove') {
+                await zoteroSync.deleteApiKey();
+                vscode.window.showInformationMessage('Zotero API key removed.');
+            }
         })
     );
 
