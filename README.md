@@ -67,6 +67,25 @@ Bidirectional sync between your code and Zotero library:
 
 > **Security**: Your API key is stored securely in your system's keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) — not in plain text settings files.
 
+### 7. 📖 Two-Way Mendeley Sync (NEW in v0.7.0!)
+Bidirectional sync between your code and Mendeley library:
+
+**Setup:**
+1.  Register your app at [dev.mendeley.com](https://dev.mendeley.com) to get Client ID and Secret
+2.  Open VS Code Settings and search for "devscholar mendeley"
+3.  Enable Mendeley integration and enter your Client ID and Secret
+4.  Run **"Connect to Mendeley"** from the Command Palette
+5.  Sign in with your Elsevier/Mendeley account in the browser
+
+**Features:**
+-   **Export to Mendeley**: Run "Sync with Mendeley" to push papers from your code to Mendeley
+-   **Import from Mendeley**: Run "Import from Mendeley" to select papers and insert citations
+-   **Folder Linking**: Run "Link Mendeley Folder" to associate a workspace with a Mendeley folder
+-   **Duplicate Detection**: Papers already in Mendeley are skipped during export
+-   **Auto Token Refresh**: OAuth tokens are automatically refreshed when expired
+
+> **Security**: OAuth tokens are stored securely in your system's keychain — not in plain text.
+
 ## 🚀 Getting Started
 
 1.  **Install** the extension.
@@ -86,6 +105,7 @@ Bidirectional sync between your code and Zotero library:
 -   [x] **v0.5.0**: Click-to-Cite (search papers by name, auto-complete citations)
 -   [x] **v0.5.1**: Zotero Export (sync papers to Zotero library)
 -   [x] **v0.6.0**: Two-Way Zotero Sync (import, collections, duplicate detection)
+-   [x] **v0.7.0**: Two-Way Mendeley Sync (OAuth2, folders, duplicate detection)
 -   [ ] **Future**:
     -   Google Scholar Integration (Smart Search Fallback)
     -   Local PDF Annotation

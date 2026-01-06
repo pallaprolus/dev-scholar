@@ -2,7 +2,7 @@
   "name": "dev-scholar",
   "displayName": "DevScholar",
   "description": "Your Code, Connected to Knowledge. Automatically link, preview, and manage research papers (arXiv, DOI) directly inside VS Code.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "pallaprolus",
   "repository": {
     "type": "git",
@@ -115,6 +115,31 @@
         "command": "devscholar.previewPdf",
         "title": "Preview PDF",
         "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.syncWithMendeley",
+        "title": "Sync with Mendeley",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.importFromMendeley",
+        "title": "Import from Mendeley",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.linkMendeleyFolder",
+        "title": "Link Mendeley Folder",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.connectMendeley",
+        "title": "Connect to Mendeley",
+        "category": "Research Papers"
+      },
+      {
+        "command": "devscholar.disconnectMendeley",
+        "title": "Disconnect from Mendeley",
+        "category": "Research Papers"
       }
     ],
     "configuration": {
@@ -182,6 +207,33 @@
           "type": "number",
           "default": 500,
           "description": "Debounce delay in milliseconds for parsing on keystroke"
+        },
+        "devscholar.mendeleyEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable Mendeley integration"
+        },
+        "devscholar.mendeleyClientId": {
+          "type": "string",
+          "default": "",
+          "description": "Mendeley OAuth Client ID (register at dev.mendeley.com)"
+        },
+        "devscholar.mendeleyClientSecret": {
+          "type": "string",
+          "default": "",
+          "description": "Mendeley OAuth Client Secret"
+        },
+        "devscholar.mendeleyFolder": {
+          "type": "string",
+          "default": "",
+          "description": "Linked Mendeley folder ID for this workspace",
+          "scope": "resource"
+        },
+        "devscholar.mendeleyFolderName": {
+          "type": "string",
+          "default": "",
+          "description": "Linked Mendeley folder name (display only)",
+          "scope": "resource"
         }
       }
     },

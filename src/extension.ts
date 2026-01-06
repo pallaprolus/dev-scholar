@@ -4,6 +4,7 @@ import { MetadataClient } from './arxivClient';
 import { HoverProvider } from './hoverProvider';
 import { BibliographyExporter } from './bibliographyExporter';
 import { ZoteroSync } from './zoteroSync';
+import { MendeleySync } from './mendeleySync';
 import { VersionTracker } from './versionTracker';
 import { FileWatcher } from './fileWatcher';
 import { PaperCodeLensProvider, PaperDecorationProvider, PaperStatusBarItem } from './codeLensProvider';
@@ -16,6 +17,7 @@ let metadataClient: MetadataClient;
 let hoverProvider: HoverProvider;
 let bibliographyExporter: BibliographyExporter;
 let zoteroSync: ZoteroSync;
+let mendeleySync: MendeleySync;
 let versionTracker: VersionTracker;
 let fileWatcher: FileWatcher;
 let codeLensProvider: PaperCodeLensProvider;
@@ -36,6 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
     hoverProvider = new HoverProvider(metadataClient);
     bibliographyExporter = new BibliographyExporter(metadataClient);
     zoteroSync = new ZoteroSync(context);
+    mendeleySync = new MendeleySync(context);
     versionTracker = new VersionTracker(context);
     fileWatcher = new FileWatcher(commentParser, 500);
     codeLensProvider = new PaperCodeLensProvider(commentParser, metadataClient);
@@ -479,6 +482,241 @@ export async function activate(context: vscode.ExtensionContext) {
             if (confirm === 'Remove') {
                 await zoteroSync.deleteApiKey();
                 vscode.window.showInformationMessage('Zotero API key removed.');
+            }
+        })
+    );
+
+    // ==================== Mendeley Commands ====================
+
+    // Connect to Mendeley (OAuth2 flow)
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.connectMendeley', async () => {
+            const config = vscode.workspace.getConfiguration('devscholar');
+
+            const clientId = config.get<string>('mendeleyClientId');
+            const clientSecret = config.get<string>('mendeleyClientSecret');
+
+            if (!clientId || !clientSecret) {
+                const setup = await vscode.window.showWarningMessage(
+                    'Mendeley Client ID and Secret not configured. Please set them in settings first.',
+                    'Open Settings', 'Cancel'
+                );
+                if (setup === 'Open Settings') {
+                    await vscode.commands.executeCommand('workbench.action.openSettings', 'devscholar.mendeley');
+                }
+                return;
+            }
+
+            await mendeleySync.authorize();
+        })
+    );
+
+    // Disconnect from Mendeley
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.disconnectMendeley', async () => {
+            const confirm = await vscode.window.showWarningMessage(
+                'Are you sure you want to disconnect from Mendeley?',
+                'Disconnect', 'Cancel'
+            );
+            if (confirm === 'Disconnect') {
+                await mendeleySync.deleteTokens();
+                vscode.window.showInformationMessage('Disconnected from Mendeley.');
+            }
+        })
+    );
+
+    // Sync with Mendeley
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.syncWithMendeley', async () => {
+            const config = vscode.workspace.getConfiguration('devscholar');
+
+            // Check if Mendeley is enabled
+            if (!config.get<boolean>('mendeleyEnabled')) {
+                const enable = await vscode.window.showWarningMessage(
+                    'Mendeley integration is not enabled. Would you like to configure it?',
+                    'Configure', 'Cancel'
+                );
+                if (enable === 'Configure') {
+                    await vscode.commands.executeCommand('workbench.action.openSettings', 'devscholar.mendeley');
+                }
+                return;
+            }
+
+            // Check for valid token
+            const token = await mendeleySync.ensureValidToken();
+            if (!token) {
+                const connect = await vscode.window.showWarningMessage(
+                    'Not connected to Mendeley. Would you like to connect now?',
+                    'Connect', 'Cancel'
+                );
+                if (connect === 'Connect') {
+                    await vscode.commands.executeCommand('devscholar.connectMendeley');
+                }
+                return;
+            }
+
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+
+            const papers = await commentParser.parseFile(editor.document);
+            if (papers.length === 0) {
+                vscode.window.showWarningMessage('No papers to sync');
+                return;
+            }
+
+            // Get linked folder (if any)
+            const folderId = config.get<string>('mendeleyFolder');
+
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: 'Syncing with Mendeley...',
+                cancellable: false
+            }, async (progress) => {
+                progress.report({ message: 'Fetching paper details...' });
+                const metadata = await metadataClient.fetchMetadata(papers);
+
+                if (metadata.length === 0) {
+                    vscode.window.showWarningMessage('No metadata found for these papers. Cannot sync.');
+                    return;
+                }
+
+                progress.report({ message: 'Sending to Mendeley...' });
+                await mendeleySync.syncPapers(metadata, folderId);
+            });
+        })
+    );
+
+    // Import from Mendeley
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.importFromMendeley', async () => {
+            const config = vscode.workspace.getConfiguration('devscholar');
+
+            // Check if Mendeley is enabled
+            if (!config.get<boolean>('mendeleyEnabled')) {
+                const enable = await vscode.window.showWarningMessage(
+                    'Mendeley integration is not enabled. Would you like to configure it?',
+                    'Configure', 'Cancel'
+                );
+                if (enable === 'Configure') {
+                    await vscode.commands.executeCommand('workbench.action.openSettings', 'devscholar.mendeley');
+                }
+                return;
+            }
+
+            // Check for valid token
+            const token = await mendeleySync.ensureValidToken();
+            if (!token) {
+                const connect = await vscode.window.showWarningMessage(
+                    'Not connected to Mendeley. Would you like to connect now?',
+                    'Connect', 'Cancel'
+                );
+                if (connect === 'Connect') {
+                    await vscode.commands.executeCommand('devscholar.connectMendeley');
+                }
+                return;
+            }
+
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                vscode.window.showWarningMessage('No active editor');
+                return;
+            }
+
+            // Get linked folder
+            const folderId = config.get<string>('mendeleyFolder');
+
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: 'Fetching papers from Mendeley...',
+                cancellable: false
+            }, async () => {
+                try {
+                    // Fetch documents from Mendeley
+                    const docs = folderId
+                        ? await mendeleySync.fetchDocumentsFromFolder(folderId)
+                        : await mendeleySync.fetchAllDocuments();
+
+                    if (docs.length === 0) {
+                        vscode.window.showInformationMessage(
+                            folderId
+                                ? 'No papers found in linked folder'
+                                : 'No papers found in Mendeley library'
+                        );
+                        return;
+                    }
+
+                    // Convert to PaperMetadata for display
+                    const papers = docs.map(doc => mendeleySync.mapFromMendeleyDocument(doc));
+
+                    // Show multi-select QuickPick
+                    const quickPickItems = papers.map(p => ({
+                        label: p.title,
+                        description: p.authors.slice(0, 2).join(', '),
+                        detail: `${p.type}:${p.id}`,
+                        picked: false,
+                        paper: p
+                    }));
+
+                    const selected = await vscode.window.showQuickPick(quickPickItems, {
+                        canPickMany: true,
+                        placeHolder: 'Select papers to insert as citations',
+                        title: 'Import from Mendeley'
+                    });
+
+                    if (!selected || selected.length === 0) return;
+
+                    // Insert citations at cursor
+                    const languageId = editor.document.languageId;
+                    const citations = selected.map(s =>
+                        mendeleySync.formatCitation(s.paper, languageId)
+                    ).join('\n\n');
+
+                    await editor.edit(editBuilder => {
+                        editBuilder.insert(editor.selection.active, citations + '\n');
+                    });
+
+                    vscode.window.showInformationMessage(`Inserted ${selected.length} citation(s)`);
+                } catch (error: any) {
+                    vscode.window.showErrorMessage(`Failed to fetch from Mendeley: ${error.message}`);
+                }
+            });
+        })
+    );
+
+    // Link Mendeley Folder
+    context.subscriptions.push(
+        vscode.commands.registerCommand('devscholar.linkMendeleyFolder', async () => {
+            const config = vscode.workspace.getConfiguration('devscholar');
+
+            // Check if Mendeley is enabled
+            if (!config.get<boolean>('mendeleyEnabled')) {
+                vscode.window.showWarningMessage('Please enable Mendeley integration first in settings.');
+                return;
+            }
+
+            // Check for valid token
+            const token = await mendeleySync.ensureValidToken();
+            if (!token) {
+                const connect = await vscode.window.showWarningMessage(
+                    'Not connected to Mendeley. Would you like to connect now?',
+                    'Connect', 'Cancel'
+                );
+                if (connect === 'Connect') {
+                    await vscode.commands.executeCommand('devscholar.connectMendeley');
+                }
+                return;
+            }
+
+            try {
+                const folder = await mendeleySync.promptForFolder();
+                if (folder) {
+                    // Save to workspace settings
+                    await config.update('mendeleyFolder', folder.id, vscode.ConfigurationTarget.Workspace);
+                    await config.update('mendeleyFolderName', folder.name, vscode.ConfigurationTarget.Workspace);
+                    vscode.window.showInformationMessage(`Linked to Mendeley folder: ${folder.name}`);
+                }
+            } catch (error: any) {
+                vscode.window.showErrorMessage(`Failed to fetch folders: ${error.message}`);
             }
         })
     );
