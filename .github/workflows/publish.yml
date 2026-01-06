@@ -2,13 +2,55 @@ name: Publish to VS Code Marketplace
 
 on:
   push:
-    tags:
-      - 'v*'  # Triggers on version tags like v0.6.0, v1.0.0
+    branches:
+      - main
+    paths:
+      - 'package.json'  # Only trigger when package.json changes
   workflow_dispatch:  # Allows manual trigger from GitHub Actions UI
 
 jobs:
-  publish:
+  check-version:
     runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check.outputs.should_publish }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need previous commit to compare
+
+      - name: Check if version changed
+        id: check
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $CURRENT_VERSION"
+
+          # Get previous version (from parent commit)
+          git show HEAD~1:package.json > /tmp/old-package.json 2>/dev/null || echo '{"version":"0.0.0"}' > /tmp/old-package.json
+          PREVIOUS_VERSION=$(node -p "require('/tmp/old-package.json').version")
+          echo "Previous version: $PREVIOUS_VERSION"
+
+          # Check if tag already exists
+          if git rev-parse "v$CURRENT_VERSION" >/dev/null 2>&1; then
+            echo "Tag v$CURRENT_VERSION already exists, skipping"
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          elif [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+            echo "Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Version unchanged, skipping publish"
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          fi
+
+  publish:
+    needs: check-version
+    if: needs.check-version.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed to create tags
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,10 +69,17 @@ jobs:
 
       - name: Run linter
         run: npm run lint
-        continue-on-error: true  # Don't fail build on lint warnings
+        continue-on-error: true
 
       - name: Package extension
         run: npx vsce package
+
+      - name: Create git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ needs.check-version.outputs.version }}" -m "Release v${{ needs.check-version.outputs.version }}"
+          git push origin "v${{ needs.check-version.outputs.version }}"
 
       - name: Publish to Marketplace
         run: npx vsce publish -p ${{ secrets.VSCE_PAT }}
@@ -40,6 +89,6 @@ jobs:
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4
         with:
-          name: devscholar-vsix
+          name: devscholar-v${{ needs.check-version.outputs.version }}
           path: '*.vsix'
           retention-days: 30
